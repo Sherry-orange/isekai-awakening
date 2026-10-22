@@ -993,16 +993,44 @@ async function supabaseRequest(path, {method="GET", body=null, token=null}={}){
   }
   return res.status===204 ? null : res.json().catch(()=>null);
 }
-/* 注册（邮箱+密码） */
-async function supabaseSignUp(email, password){
-  const data = await supabaseRequest("/auth/v1/signup", {method:"POST", body:{email, password}});
+/* 用户名 -> 内部邮箱映射（用户只看到用户名，邮箱只作内部唯一标识）
+   规则：2-12 个字符，支持中文/字母/数字/下划线/连字符，不含空格与@；
+   非ASCII字符（中文等）编码为 u+十六进制码点，保证 email 合法且唯一；display 保留原名用于展示 */
+function unameToEmail(name){
+  const raw = String(name||"").trim();
+  if(raw.length < 2 || raw.length > 12) return {ok:false};
+  if(/[\s@]/.test(raw)) return {ok:false};
+  let ident="";
+  for(const ch of raw){
+    const c = ch.codePointAt(0);
+    if(c>=0x41 && c<=0x5A) ident += ch.toLowerCase();
+    else if(c>=0x61 && c<=0x7A) ident += ch;
+    else if(c>=0x30 && c<=0x39) ident += ch;
+    else if(ch==="_" || ch==="-") ident += ch;
+    else if(c>0x7F) ident += "u"+c.toString(16);
+    else return {ok:false};
+  }
+  if(ident.length > 56) return {ok:false};
+  return {ok:true, ident:ident, display:raw, email:ident+"@isekai.player"};
+}
+/* 注册（用户名+密码） */
+async function supabaseSignUp(username, password){
+  const m = unameToEmail(username);
+  if(!m.ok) return {error:"用户名需 2-12 个字符，支持中文/字母/数字/下划线/连字符，不能含空格或@"};
+  const data = await supabaseRequest("/auth/v1/signup", {method:"POST", body:{email: m.email, password}});
+  if(data && data.user){
+    data.user.username = m.display; /* 展示用原始用户名 */
+    data.username = m.display;
+  }
   return data;
 }
-/* 登录 */
-async function supabaseSignIn(email, password){
-  const data = await supabaseRequest("/auth/v1/token?grant_type=password", {method:"POST", body:{email, password}});
+/* 登录（用户名+密码） */
+async function supabaseSignIn(username, password){
+  const m = unameToEmail(username);
+  if(!m.ok) return {error:"用户名需 2-12 个字符，支持中文/字母/数字/下划线/连字符，不能含空格或@"};
+  const data = await supabaseRequest("/auth/v1/token?grant_type=password", {method:"POST", body:{email: m.email, password}});
   if(data && data.access_token){
-    supabaseSession = {access_token: data.access_token, user: data.user, refresh_token: data.refresh_token};
+    supabaseSession = {access_token: data.access_token, user: data.user, refresh_token: data.refresh_token, username: m.display};
     try{ localStorage.setItem("isekai_sb_session", JSON.stringify(supabaseSession)); }catch(e){}
   }
   return data;
@@ -1025,6 +1053,18 @@ function supabaseRestoreSession(){
 function supabaseSignOut(){
   supabaseSession = null;
   try{ localStorage.removeItem("isekai_sb_session"); }catch(e){}
+}
+/* 将 Supabase 报错翻译成友好的中文提示 */
+function authFriendlyError(e){
+  const msg = String(e && e.message || e || "");
+  if(/already been registered/.test(msg) || /User already registered/.test(msg)) return "该用户名已被注册，换一个试试，或直接去登录";
+  if(/weak password/.test(msg)) return "密码太弱，请至少 6 位（建议字母+数字）";
+  if(/rate limit|over_email|too many/.test(msg)) return "操作太频繁了，请稍等几分钟再试";
+  if(/invalid_credentials|Invalid login credentials/.test(msg)) return "用户名或密码错误";
+  if(/email_address_invalid/.test(msg)) return "用户名格式不支持，请用中文/字母/数字组合（2-12位）";
+  if(/unable to validate email/.test(msg)) return "用户名格式不支持，请用中文/字母/数字组合（2-12位）";
+  if(/network|fetch.*failed|Failed to fetch/i.test(msg)) return "网络连接失败，请检查网络后重试";
+  return msg.replace(/^Supabase \d+[:：]\s*/,"").slice(0,80);
 }
 /* 云端读档：返回存档数据或 null */
 async function supabaseLoadCloud(){
@@ -1380,43 +1420,55 @@ function fmtTimeAgo(ts){
 }
 /* ===== 账号与云存档 ===== */
 function authStatus(){
-  if(supabaseSession && supabaseSession.user) return {logged:true, email:supabaseSession.user.email || "已登录"};
-  if(supabaseRestoreSession()) return {logged:true, email:supabaseSession.user.email || "已登录"};
+  if(supabaseSession && supabaseSession.user) return {logged:true, email:supabaseSession.user.email || "", username: supabaseSession.username|| supabaseSession.user.email || "已登录"};
+  if(supabaseRestoreSession()) return {logged:true, email:supabaseSession.user.email || "", username: (supabaseSession.username || (supabaseSession.user.email||"已登录"))};
   return {logged:false};
 }
 async function authLogin(){
-  const email = $("authEmail").value.trim();
+  const username = $("authUser").value.trim();
   const pass = $("authPass").value;
-  if(!email || !pass){ $("authMsg").textContent="请填写邮箱和密码"; return; }
+  if(!username || !pass){ $("authMsg").textContent="请填写用户名和密码"; return; }
   $("authMsg").textContent="登录中…";
   try{
-    const d = await supabaseSignIn(email, pass);
+    const d = await supabaseSignIn(username, pass);
+    if(d && d.error){ $("authMsg").textContent="❌ "+d.error; return; }
     if(d && d.access_token){
       $("authMsg").textContent="✅ 登录成功，正在同步存档…";
       await syncCloudOnLogin();
       renderAuthArea(); renderMainMenu();
     }else{
-      $("authMsg").textContent="❌ 登录失败：请检查邮箱密码（未注册请先用注册）";
+      $("authMsg").textContent="❌ 登录失败：用户名或密码错误（未注册请先注册）";
     }
   }catch(e){
-    $("authMsg").textContent="❌ 登录失败："+e.message;
+    $("authMsg").textContent="❌ 登录失败："+authFriendlyError(e);
   }
 }
 async function authRegister(){
-  const email = $("authEmail").value.trim();
+  const username = $("authUser").value.trim();
   const pass = $("authPass").value;
-  if(!email || !pass){ $("authMsg").textContent="请填写邮箱和密码"; return; }
+  if(!username || !pass){ $("authMsg").textContent="请填写用户名和密码"; return; }
   if(pass.length < 6){ $("authMsg").textContent="密码至少 6 位"; return; }
   $("authMsg").textContent="注册中…";
   try{
-    const d = await supabaseSignUp(email, pass);
+    const d = await supabaseSignUp(username, pass);
+    if(d && d.error){ $("authMsg").textContent="❌ "+d.error; return; }
     if(d && d.user){
-      $("authMsg").textContent="✅ 注册成功！请查收邮箱验证（未验证前部分账号可能无法登录），然后点登录。";
+      /* 注册成功：若响应带令牌则自动登录（Confirm email 已关闭，正常应带）；否则提示点击登录 */
+      if(d.access_token){
+        const m = unameToEmail(username);
+        supabaseSession = {access_token: d.access_token, user: d.user, refresh_token: d.refresh_token, username: m.display};
+        try{ localStorage.setItem("isekai_sb_session", JSON.stringify(supabaseSession)); }catch(e){}
+        $("authMsg").textContent="✅ 注册成功，已自动登录！正在同步存档…";
+        await syncCloudOnLogin();
+        renderAuthArea(); renderMainMenu();
+      }else{
+        $("authMsg").textContent="✅ 注册成功！请直接点「登录」开始云存档。";
+      }
     }else{
-      $("authMsg").textContent="✅ 已提交注册，若邮箱已被使用请直接登录";
+      $("authMsg").textContent="⚠️ 注册返回异常，请重试或直接点登录";
     }
   }catch(e){
-    $("authMsg").textContent="❌ 注册失败："+e.message;
+    $("authMsg").textContent="❌ 注册失败："+authFriendlyError(e);
   }
 }
 function authLogout(){
@@ -1460,7 +1512,7 @@ function renderAuthArea(){
   if(st.logged){
     el.innerHTML =
       '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">'+
-        '<span style="font-size:13px;color:#9aa5d4;">☁️ 账号：<b style="color:var(--gold);">'+st.email+'</b></span>'+
+        '<span style="font-size:13px;color:#9aa5d4;">☁️ 账号：<b style="color:var(--gold);">'+st.username+'</b></span>'+
         '<button class="reset-small" style="padding:2px 10px;" onclick="authLogout()">退出</button>'+
       '</div>'+
       '<div style="font-size:12px;color:#8b95c0;margin-top:6px;">云存档已开启：任何电脑登录此账号，都会自动载入最新存档</div>'+
@@ -1468,7 +1520,7 @@ function renderAuthArea(){
   }else{
     el.innerHTML =
       '<div style="font-size:13px;color:#9aa5d4;margin-bottom:8px;">☁️ 云存档（可选）</div>'+
-      '<input id="authEmail" type="email" placeholder="邮箱" style="width:100%;box-sizing:border-box;background:#0a0f1f;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;margin-bottom:6px;font-size:13px;">'+
+      '<input id="authUser" type="text" placeholder="用户名（2-12位，支持中文/字母/数字）" style="width:100%;box-sizing:border-box;background:#0a0f1f;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;margin-bottom:6px;font-size:13px;">'+
       '<input id="authPass" type="password" placeholder="密码（至少6位）" style="width:100%;box-sizing:border-box;background:#0a0f1f;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;margin-bottom:6px;font-size:13px;">'+
       '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
         '<button class="reset-small" onclick="authLogin()" style="flex:1;">登录</button>'+
