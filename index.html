@@ -494,6 +494,9 @@
   <div id="mainScreen" class="screen">
     <div class="title-logo">异界觉醒</div>
     <div class="sub-title">—— 觉醒者 · 降临异境 ——</div>
+    <div class="auth-card" id="authCard" style="min-width:320px;max-width:480px;margin:10px 0 4px;padding:12px 16px;position:relative;z-index:1;background:rgba(24,30,66,.6);border:1px solid rgba(130,120,255,.25);border-radius:16px;backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.35);">
+      <div id="authArea"></div>
+    </div>
     <div class="menu-card" id="menuSaveCard">
       <div id="menuHasSave"></div>
       <div id="menuNoSave"></div>
@@ -969,6 +972,75 @@ const STORY_INTRO = "世界破碎的边缘，一个全新的觉醒者睁开了�
 
 /* ================= 游戏状态 ================= */
 const SAVE_KEY = "isekai_awaken_save_v1";
+
+/* ================= Supabase 云存档 ================= */
+const SUPABASE_URL = "https://heajfztnvwermvxktbva.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlYWpmenRudndlcm12eGt0YnZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzg4NjIsImV4cCI6MjEwODI1NDg2Mn0.ZAJMjSd_AB8ok9dZuRTNAJC2zP9z35HBfEiApm4ST-o";
+
+let supabaseSession = null; /* 登录后的会话 {access_token, user:{id,email}} */
+
+async function supabaseRequest(path, {method="GET", body=null, token=null}={}){
+  const headers = {
+    "apikey": SUPABASE_ANON,
+    "Content-Type": "application/json",
+    "Prefer": "return=representation"
+  };
+  if(token) headers["Authorization"] = "Bearer "+token;
+  const res = await fetch(SUPABASE_URL + path, {method, headers, body: body?JSON.stringify(body):undefined});
+  if(!res.ok){
+    const t = await res.text().catch(()=>"");
+    throw new Error("Supabase " + res.status + ": " + t.slice(0,160));
+  }
+  return res.status===204 ? null : res.json().catch(()=>null);
+}
+/* 注册（邮箱+密码） */
+async function supabaseSignUp(email, password){
+  const data = await supabaseRequest("/auth/v1/signup", {method:"POST", body:{email, password}});
+  return data;
+}
+/* 登录 */
+async function supabaseSignIn(email, password){
+  const data = await supabaseRequest("/auth/v1/token?grant_type=password", {method:"POST", body:{email, password}});
+  if(data && data.access_token){
+    supabaseSession = {access_token: data.access_token, user: data.user, refresh_token: data.refresh_token};
+    try{ localStorage.setItem("isekai_sb_session", JSON.stringify(supabaseSession)); }catch(e){}
+  }
+  return data;
+}
+/* 从本地恢复会话 */
+function supabaseRestoreSession(){
+  try{
+    const raw = localStorage.getItem("isekai_sb_session");
+    if(raw){
+      const s = JSON.parse(raw);
+      if(s && s.access_token && s.user){
+        supabaseSession = s;
+        return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+/* 登出 */
+function supabaseSignOut(){
+  supabaseSession = null;
+  try{ localStorage.removeItem("isekai_sb_session"); }catch(e){}
+}
+/* 云端读档：返回存档数据或 null */
+async function supabaseLoadCloud(){
+  if(!supabaseSession) return null;
+  const rows = await supabaseRequest("/rest/v1/saves?user_id=eq."+supabaseSession.user.id+"&select=data", {token: supabaseSession.access_token});
+  if(rows && rows.length) return rows[0].data;
+  return null;
+}
+/* 云端写档（upsert） */
+async function supabaseSaveCloud(data){
+  if(!supabaseSession) return false;
+  const body = { user_id: supabaseSession.user.id, data: data };
+  await supabaseRequest("/rest/v1/saves?on_conflict=user_id", {method:"POST", body, token: supabaseSession.access_token});
+  return true;
+}
+
 const EMPTY = {raceId:null,classId:null,lvl:1,xp:0,ch:1,stage:1,sub:0,kills:0,fails:0,maxLvl:1,storySeen:0,startedAt:Date.now(),lastSeen:Date.now(),mats:0,autoDismantle:false,talentPts:0,talents:{atk:0,hp:0,aspd:0,crit:0,ls:0,critDmg:0},essence:0,bag:[],equip:{weapon:null,armor:null,helmet:null,boots:null,trinket:null,cloak:null}};
 let S = JSON.parse(JSON.stringify(EMPTY));
 let combat = null;   // {enemyHp,enemyMax,heroHp,heroMax,skillCd,skillReadyAt,attackAcc,winFlag}
@@ -1082,6 +1154,7 @@ function xpRatePerSec(){
 function xpNeed(lvl){return Math.round(150*Math.pow(lvl,2.45))+240;}
 
 /* ================= 存档 ================= */
+let sbCloudTimer=0;
 function save(){
   S.lastSeen=Date.now();
   try{
@@ -1091,6 +1164,14 @@ function save(){
     /* 存储失败不静默：给出可感知的提示 */
     try{ $("hSaveInfo").textContent="⚠️ 存档失败（本地存储不可用）"; }catch(_){}
     console && console.warn && console.warn("存档写入失败:", e);
+  }
+  /* 登录状态下自动同步云端（节流） */
+  if(supabaseSession && S.raceId){
+    const now = Date.now();
+    if(now - sbCloudTimer > 5000){
+      sbCloudTimer = now;
+      supabaseSaveCloud(JSON.parse(JSON.stringify(S))).catch(()=>{});
+    }
   }
 }
 function load(){
@@ -1297,12 +1378,113 @@ function fmtTimeAgo(ts){
   if(s<86400) return Math.floor(s/3600)+"小时前";
   return Math.floor(s/86400)+"天前";
 }
+/* ===== 账号与云存档 ===== */
+function authStatus(){
+  if(supabaseSession && supabaseSession.user) return {logged:true, email:supabaseSession.user.email || "已登录"};
+  if(supabaseRestoreSession()) return {logged:true, email:supabaseSession.user.email || "已登录"};
+  return {logged:false};
+}
+async function authLogin(){
+  const email = $("authEmail").value.trim();
+  const pass = $("authPass").value;
+  if(!email || !pass){ $("authMsg").textContent="请填写邮箱和密码"; return; }
+  $("authMsg").textContent="登录中…";
+  try{
+    const d = await supabaseSignIn(email, pass);
+    if(d && d.access_token){
+      $("authMsg").textContent="✅ 登录成功，正在同步存档…";
+      await syncCloudOnLogin();
+      renderAuthArea(); renderMainMenu();
+    }else{
+      $("authMsg").textContent="❌ 登录失败：请检查邮箱密码（未注册请先用注册）";
+    }
+  }catch(e){
+    $("authMsg").textContent="❌ 登录失败："+e.message;
+  }
+}
+async function authRegister(){
+  const email = $("authEmail").value.trim();
+  const pass = $("authPass").value;
+  if(!email || !pass){ $("authMsg").textContent="请填写邮箱和密码"; return; }
+  if(pass.length < 6){ $("authMsg").textContent="密码至少 6 位"; return; }
+  $("authMsg").textContent="注册中…";
+  try{
+    const d = await supabaseSignUp(email, pass);
+    if(d && d.user){
+      $("authMsg").textContent="✅ 注册成功！请查收邮箱验证（未验证前部分账号可能无法登录），然后点登录。";
+    }else{
+      $("authMsg").textContent="✅ 已提交注册，若邮箱已被使用请直接登录";
+    }
+  }catch(e){
+    $("authMsg").textContent="❌ 注册失败："+e.message;
+  }
+}
+function authLogout(){
+  supabaseSignOut();
+  renderAuthArea(); renderMainMenu();
+  log("👋 已退出账号，改为本地存档模式","st");
+}
+async function syncCloudOnLogin(){
+  if(!supabaseSession) return;
+  try{
+    const cloud = await supabaseLoadCloud();
+    const hasLocal = !!(S.raceId && S.classId);
+    if(cloud && cloud.raceId){
+      /* 云端有档：用云端档覆盖本地（更“继续游玩”），保留本地无档时直接拉取 */
+      S = Object.assign(JSON.parse(JSON.stringify(EMPTY)), cloud);
+      save();
+      log("☁️ 已从云端载入存档（"+ (cloud.raceId||"") +" · Lv."+(cloud.lvl||1)+"）","st");
+    } else if(hasLocal){
+      /* 云端无档但本地有档：上传本地 */
+      await supabaseSaveCloud(JSON.parse(JSON.stringify(S)));
+      log("☁️ 本地存档已上传云端","st");
+    }
+    try{ $("hSaveInfo").textContent="☁️ 已同步："+new Date().toLocaleTimeString(); }catch(_){}
+  }catch(e){
+    console && console.warn && console.warn("云同步失败:", e);
+    try{ $("hSaveInfo").textContent="⚠️ 云同步失败，先用本地存档"; }catch(_){}
+  }
+}
+async function authCloudSyncNow(){
+  if(!supabaseSession){ $("authMsg").textContent="请先登录账号"; return; }
+  $("authMsg").textContent="正在同步…";
+  try{
+    await supabaseSaveCloud(JSON.parse(JSON.stringify(S)));
+    $("authMsg").textContent="✅ 云端存档已更新";
+  }catch(e){ $("authMsg").textContent="❌ 同步失败："+e.message; }
+}
+function renderAuthArea(){
+  const el = $("authArea");
+  if(!el) return;
+  const st = authStatus();
+  if(st.logged){
+    el.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">'+
+        '<span style="font-size:13px;color:#9aa5d4;">☁️ 账号：<b style="color:var(--gold);">'+st.email+'</b></span>'+
+        '<button class="reset-small" style="padding:2px 10px;" onclick="authLogout()">退出</button>'+
+      '</div>'+
+      '<div style="font-size:12px;color:#8b95c0;margin-top:6px;">云存档已开启：任何电脑登录此账号，都会自动载入最新存档</div>'+
+      '<div style="margin-top:6px;"><button class="reset-small" onclick="authCloudSyncNow()">☁️ 立即同步存档</button></div>';
+  }else{
+    el.innerHTML =
+      '<div style="font-size:13px;color:#9aa5d4;margin-bottom:8px;">☁️ 云存档（可选）</div>'+
+      '<input id="authEmail" type="email" placeholder="邮箱" style="width:100%;box-sizing:border-box;background:#0a0f1f;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;margin-bottom:6px;font-size:13px;">'+
+      '<input id="authPass" type="password" placeholder="密码（至少6位）" style="width:100%;box-sizing:border-box;background:#0a0f1f;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;margin-bottom:6px;font-size:13px;">'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
+        '<button class="reset-small" onclick="authLogin()" style="flex:1;">登录</button>'+
+        '<button class="reset-small" onclick="authRegister()" style="flex:1;">注册</button>'+
+      '</div>'+
+      '<div id="authMsg" style="font-size:11px;color:#8b95c0;margin-top:6px;min-height:14px;"></div>'+
+      '<div style="font-size:11px;color:#7f8cc0;margin-top:2px;">不登录也能玩（本地存档），登录后换设备可继续游玩</div>';
+  }
+}
 function renderMainMenu(){
   /* 直接使用内存中的最新游戏状态渲染（返回菜单时数据必然是最新，无需重新读档） */
   const has=!!(S.raceId&&S.classId);
   $("menuHasSave").innerHTML="";
   $("menuNoSave").innerHTML="";
   $("menuActions").innerHTML="";
+  renderAuthArea();
   if(has){
     const race=RACES.find(r=>r.id===S.raceId);
     const cls=CLASSES.find(c=>c.id===S.classId);
@@ -1341,6 +1523,12 @@ function newGameFlow(){
 function enterGame(){
   $("screens").style.display="none";
   const game=$("game"); game.classList.add("on");
+  if(supabaseRestoreSession()){
+    /* 有账号会话：先拉云端存档（异步，不阻塞进入） */
+    syncCloudOnLogin().then(()=>{
+      if(combat){ /* 重新用云端档建战斗 */ }
+    });
+  }
   initCombat();
   renderAll();
   startLoop();
