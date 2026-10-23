@@ -502,13 +502,7 @@
       <div id="menuNoSave"></div>
     </div>
     <div class="menu-actions" id="menuActions"></div>
-    <div style="margin-top:10px;"><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
-      <button class="reset-small" onclick="openRanking()" style="padding:8px 16px;color:var(--cyan);">🏆 排行榜</button>
-      <button class="reset-small" onclick="openDaily()" style="padding:8px 16px;color:var(--gold);">📅 签到</button>
-      <button class="reset-small" onclick="openPet()" style="padding:8px 16px;color:#7ae582;">🐾 宠物</button>
-      <button class="reset-small" onclick="openFriends()" style="padding:8px 16px;color:#ff9ad1;">👥 好友</button>
-      <button class="reset-small" onclick="openLeague()" style="padding:8px 16px;color:#9be8ff;">🌐 联赛</button>
-    </div></div>
+    <div id="menuQuickTool" style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"></div>
     <div class="step-hint" id="menuHint">选择你的冒险方式</div>
   </div>
   <div id="introScreen" class="screen hidden">
@@ -557,6 +551,13 @@
         <div class="nav-btn" data-tab="equip">🎒 装备</div>
         <div class="nav-btn" data-tab="sets">💠 套装</div>
         <div class="nav-btn" data-tab="adventure">📖 冒险</div>
+      </div>
+      <div id="gameTools" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 8px 4px;border-top:1px solid rgba(130,120,255,.15);margin-top:10px;">
+        <button class="reset-small" onclick="openRanking()" style="padding:5px 10px;color:var(--cyan);font-size:12px;">🏆 排行榜</button>
+        <button class="reset-small" onclick="openDaily()" style="padding:5px 10px;color:var(--gold);font-size:12px;">📅 签到</button>
+        <button class="reset-small" onclick="openPet()" style="padding:5px 10px;color:#7ae582;font-size:12px;">🐾 宠物</button>
+        <button class="reset-small" onclick="openFriends()" style="padding:5px 10px;color:#ff9ad1;font-size:12px;">👥 好友</button>
+        <button class="reset-small" onclick="openLeague()" style="padding:5px 10px;color:#9be8ff;font-size:12px;">🌐 联赛</button>
       </div>
       <div class="stat-mini" id="statMini"></div>
     </aside>
@@ -1112,15 +1113,31 @@ function playerPower(){
 async function supabaseRankingPush(){
   if(!supabaseSession) return false;
   try{
-    const body={ user_id: supabaseSession.user.id, username: (supabaseSession.username||"觉醒者"), lvl: S.lvl||1, stage: S.stage||1, ch: S.ch||1, power: playerPower(), race: S.raceId||"human" };
-    await supabaseRequest("/rest/v1/rankings?on_conflict=user_id", {method:"POST", body, token: supabaseSession.access_token, prefer:"return=representation,resolution=merge-duplicates"});
+    let body={ user_id: supabaseSession.user.id, username: (supabaseSession.username||"觉醒者"), lvl: S.lvl||1, stage: S.stage||1, ch: S.ch||1, power: playerPower(), race: S.raceId||"human" };
+    try{
+      await supabaseRequest("/rest/v1/rankings?on_conflict=user_id", {method:"POST", body, token: supabaseSession.access_token, prefer:"return=representation,resolution=merge-duplicates"});
+    }catch(e){
+      /* 降级：不带 race（旧表结构） */
+      try{
+        delete body.race;
+        await supabaseRequest("/rest/v1/rankings?on_conflict=user_id", {method:"POST", body, token: supabaseSession.access_token, prefer:"return=representation,resolution=merge-duplicates"});
+      }catch(e2){ return false; }
+    }
     return true;
   }catch(e){ return false; }
 }
 async function supabaseRankingFetch(){
-  /* 拉取战力榜 Top 50 */
-  const rows = await supabaseRequest("/rest/v1/rankings?select=username,lvl,ch,stage,power,race&order=power.desc&limit=100", {});
-  return rows||[];
+  /* 拉取战力榜 Top 100；race 列可能尚未建好，失败时降级为不含 race 的查询 */
+  try{
+    const rows = await supabaseRequest("/rest/v1/rankings?select=username,lvl,ch,stage,power,race&order=power.desc&limit=100", {});
+    return rows||[];
+  }catch(e){
+    try{
+      const rows = await supabaseRequest("/rest/v1/rankings?select=username,lvl,ch,stage,power&order=power.desc&limit=100", {});
+      (rows||[]).forEach(r=>{ r.race=null; });
+      return rows||[];
+    }catch(e2){ return []; }
+  }
 }
 let rankTimer=0;
 function maybeRankPush(){
@@ -3640,7 +3657,7 @@ function openLeague(){
   supabaseRankingFetch().then(rows=>{
     const all=rows||[];
     const races=RACES.map(r=>({id:r.id,name:r.name,icon:r.icon,members:[],power:0}));
-    all.forEach(r=>{ const rc=races.find(x=>x.id===r.race)||races[0]; if(rc){rc.members.push(r);rc.power+=(r.power||0);} });
+    all.forEach(r=>{ const rc=races.find(x=>x.id===(r.race||"human"))||races[0]; if(rc){rc.members.push(r);rc.power+=(r.power||0);} });
     races.sort((a,b)=>b.power-a.power);
     let h='<div style="font-size:12px;color:#8b95c0;margin-bottom:8px;">种族总战力排行（依据最新榜单）</div>';
     races.forEach((rc,i)=>{
