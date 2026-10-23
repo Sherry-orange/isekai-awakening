@@ -398,7 +398,7 @@
   .skillbar{display:flex;gap:8px;margin-top:6px;justify-content:center;}
   .skill{width:52px;text-align:center;position:relative;background:#0a0f1f;border:1px solid var(--line);border-radius:10px;padding:5px 3px;overflow:hidden;}
   .skill .ic{font-size:20px;}
-  .skill .nm{font-size:10px;color:var(--dim);margin-top:2px;}
+  .skill .nm{font-size:10px;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .skill .cd{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);display:flex;align-items:flex-end;justify-content:center;transition:height .2s;color:var(--cyan);font-size:12px;font-weight:800;}
   .skill.ready{border-color:var(--green);box-shadow:0 0 10px rgba(122,229,130,.35);}
   .skill.ulti-slot{border-color:rgba(255,79,163,.6);background:linear-gradient(180deg,#2a1030,#181026);}
@@ -512,6 +512,121 @@
     .card{width:100%;}
     .card-img-wrap{height:170px;}
     .eq-card .ec-actions .alloc-plus{width:26px;height:26px;}
+  }
+
+  /* ===== v2 视觉升级：工坊 / 宠物 / 技能树 / 冒险 ===== */
+  .panel{background:linear-gradient(180deg,rgba(28,38,76,.94),rgba(15,21,44,.96));border:1px solid rgba(130,120,255,.2);box-shadow:0 16px 40px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.04);}
+  .panel h3{display:flex;align-items:center;gap:8px;font-size:14px;letter-spacing:1px;border-bottom:1px solid rgba(130,120,255,.18);padding-bottom:8px;}
+  .page-sub{font-size:12px;color:#7f8cc0;margin:-4px 0 12px;line-height:1.6;}
+  .section-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:1px;color:var(--gold);margin:4px 0 8px;}
+  .section-title::before{content:"";width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#ffe9ae,#ffb53e);box-shadow:0 0 8px rgba(255,200,100,.5);}
+  .soft-card{background:linear-gradient(180deg,rgba(29,38,76,.82),rgba(17,23,49,.9));border:1px solid rgba(130,120,255,.18);border-radius:14px;padding:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.035);}
+  .pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.5px;border:1px solid rgba(130,120,255,.3);background:rgba(44,58,107,.35);color:#9aa5d4;}
+  .pill.gold{color:#ffd166;border-color:rgba(255,209,102,.4);background:rgba(255,209,102,.08);}
+  .pill.green{color:#7ae582;border-color:rgba(122,229,130,.35);background:rgba(122,229,130,.07);}
+  .pill.pink{color:#ff9ad1;border-color:rgba(255,154,209,.35);background:rgba(255,154,209,.07);}
+  .craft-hero{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,209,102,.22);background:linear-gradient(120deg,rgba(255,209,102,.09),rgba(76,201,240,.05),rgba(20,27,51,.7));margin-bottom:14px;}
+  .craft-res{display:flex;align-items:baseline;gap:6px;font-size:12px;color:#9aa5d4;padding:5px 10px;border-radius:10px;background:rgba(10,15,31,.55);border:1px solid rgba(130,120,255,.18);}
+  .craft-res b{font-size:17px;color:var(--gold);}
+  .craft-res.cyan b{color:var(--cyan);}
+  .craft-res.purple b{color:#c77dff;}
+  .craft-grid{display:grid;grid-template-columns:1.2fr .9fr;gap:14px;align-items:start;}
+  .craft-list{display:flex;flex-direction:column;gap:8px;}
+  .craft-card{position:relative;padding:10px 12px;border-radius:14px;border:1px solid rgba(130,120,255,.18);background:linear-gradient(180deg,rgba(30,40,80,.7),rgba(16,22,46,.85));transition:.18s;}
+  .craft-card:hover{border-color:rgba(255,209,102,.45);transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+  .craft-card .cc-top{display:flex;align-items:center;gap:6px;}
+  .craft-card .cc-name{font-size:13px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .craft-card .cc-meta{font-size:11px;color:#8b95c0;margin-top:4px;line-height:1.7;}
+  .craft-card .cc-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .craft-card .cc-actions button{font-size:11px;padding:4px 8px;}
+  .craft-empty{padding:22px;text-align:center;color:#7f8cc0;font-size:12px;border:1px dashed rgba(130,120,255,.25);border-radius:14px;}
+  .gem-inv{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;}
+  .gem-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:10px;background:rgba(10,15,31,.65);border:1px solid rgba(130,120,255,.2);font-size:12px;color:#dfe5ff;}
+  .gem-chip small{color:#8b95c0;font-size:10px;}
+  .gem-chip.g1{border-color:rgba(139,149,192,.35);}
+  .gem-chip.g2{border-color:rgba(76,201,240,.35);}
+  .gem-chip.g3{border-color:rgba(199,125,255,.45);box-shadow:0 0 10px rgba(199,125,255,.12);}
+  .gem-slot{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#9be8ff;}
+  .craft-tip{font-size:11px;color:#7f8cc0;line-height:1.8;margin-top:6px;}
+
+  /* 宠物 */
+  .modal.pet-modal{max-width:860px;}
+  .modal.pet-modal .m-body{max-height:62vh;}
+  .pet-hero{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px;border:1px solid rgba(122,229,130,.22);background:linear-gradient(120deg,rgba(122,229,130,.08),rgba(76,201,240,.04),rgba(20,27,51,.7));margin-bottom:12px;flex-wrap:wrap;}
+  .pet-hero .ph-emoji{width:62px;height:62px;display:flex;align-items:center;justify-content:center;border-radius:18px;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.18),rgba(20,27,51,.9));border:1px solid rgba(255,209,102,.35);font-size:34px;box-shadow:0 0 20px rgba(255,200,100,.12);}
+  .pet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .pet-card{position:relative;padding:10px 8px;border-radius:14px;border:1px solid rgba(130,120,255,.18);background:linear-gradient(180deg,rgba(29,38,76,.8),rgba(16,22,46,.9));text-align:center;transition:.18s;min-height:132px;display:flex;flex-direction:column;align-items:center;}
+  .pet-card:hover{transform:translateY(-2px);border-color:rgba(255,209,102,.4);}
+  .pet-card.owned{border-color:rgba(122,229,130,.25);}
+  .pet-card.active{border-color:rgba(255,209,102,.65);box-shadow:0 0 0 1px rgba(255,209,102,.2),0 0 18px rgba(255,200,100,.12);}
+  .pet-card.locked{opacity:.55;filter:saturate(.45);}
+  .pet-card .pe{font-size:28px;line-height:1.2;margin-bottom:2px;}
+  .pet-card .pn{font-size:11px;font-weight:800;color:#e8ecff;}
+  .pet-card .pd{font-size:9px;color:#8b95c0;line-height:1.5;margin-top:2px;min-height:24px;}
+  .pet-card .pl{font-size:9px;color:#7ae582;margin-top:2px;}
+  .pet-card .pa{margin-top:auto;display:flex;gap:3px;flex-wrap:wrap;justify-content:center;}
+  .pet-card .pa button{font-size:9px;padding:2px 6px;border-radius:6px;}
+  .pet-card .active-tag{position:absolute;top:6px;right:6px;font-size:8px;color:#2b2004;background:linear-gradient(180deg,#ffe9ae,#ffb53e);border-radius:6px;padding:1px 5px;font-weight:800;}
+  .pet-cost{font-size:11px;color:#9aa5d4;margin-top:3px;}
+  .pet-cost b{color:#c77dff;}
+
+  /* 技能树 */
+  .modal.tree-modal{max-width:1040px;}
+  .modal.tree-modal .m-body{max-height:68vh;}
+  .tree-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 12px;border-radius:12px;background:rgba(10,15,31,.6);border:1px solid rgba(130,120,255,.18);margin-bottom:10px;font-size:12px;color:#9aa5d4;}
+  .tree-top b{color:var(--gold);font-size:16px;}
+  .tree-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+  .flow-chip{font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid rgba(130,120,255,.22);background:rgba(10,15,31,.55);color:#9aa5d4;cursor:pointer;transition:.15s;}
+  .flow-chip:hover{color:var(--gold);border-color:rgba(255,209,102,.4);}
+  .flow-chip.on{color:#10173c;background:linear-gradient(180deg,#ffe9ae,#ffb53e);border-color:#ffd166;font-weight:800;}
+  .tree-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start;}
+  .tree-col{padding:11px;border-radius:14px;border:1px solid rgba(130,120,255,.18);background:linear-gradient(180deg,rgba(29,38,76,.72),rgba(15,21,44,.9));}
+  .tree-col .tc-head{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;color:#e8ecff;}
+  .tree-col .tc-head .tc-ic{font-size:20px;}
+  .tree-col .tc-head .tc-lv{margin-left:auto;font-size:10px;color:#9aa5d4;font-weight:400;}
+  .tree-dots{display:flex;gap:3px;margin:9px 0 6px;}
+  .tree-dot{flex:1;height:6px;border-radius:4px;background:#1a2347;transition:.2s;}
+  .tree-dot.on{background:linear-gradient(90deg,#ffd166,#f0a93b);box-shadow:0 0 6px rgba(255,200,100,.35);}
+  .tree-scale{display:flex;justify-content:space-between;font-size:8px;color:#556;margin-bottom:7px;}
+  .tree-branch{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(130,120,255,.18);}
+  .tree-branch-label{font-size:9px;color:#7f8cc0;letter-spacing:1px;margin-bottom:4px;}
+  .mut-card{width:100%;text-align:left;padding:6px 8px;border-radius:9px;border:1px solid rgba(130,120,255,.18);background:rgba(10,15,31,.5);color:#c9d2f5;cursor:pointer;transition:.15s;font-size:11px;margin-bottom:4px;font-family:inherit;}
+  .mut-card:hover{border-color:rgba(255,209,102,.45);}
+  .mut-card.on{border-color:rgba(255,209,102,.6);background:rgba(255,209,102,.09);box-shadow:0 0 10px rgba(255,200,100,.08);}
+  .mut-card.disabled{opacity:.4;cursor:not-allowed;}
+  .mut-card b{display:block;font-size:11px;color:#ffd97a;}
+  .mut-card span{font-size:9px;color:#8b95c0;line-height:1.5;display:block;margin-top:1px;}
+  .tree-up{width:100%;margin-top:4px;padding:6px 8px;border-radius:9px;border:none;background:linear-gradient(180deg,#3aa8ff,#2b7fd0);color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .tree-up:disabled{opacity:.35;cursor:not-allowed;}
+  .tree-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:#7f8cc0;}
+
+  /* 冒险 */
+  .adv-hero{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:13px 15px;border-radius:16px;border:1px solid rgba(255,209,102,.22);background:linear-gradient(120deg,rgba(255,209,102,.08),rgba(76,201,240,.04),rgba(20,27,51,.7));margin-bottom:12px;}
+  .adv-hero .ah-race{font-size:18px;font-weight:800;color:#ffd97a;letter-spacing:1px;}
+  .adv-hero .ah-sub{font-size:11px;color:#9aa5d4;margin-top:2px;}
+  .adv-hero .ah-prog{margin-left:auto;text-align:right;font-size:11px;color:#8b95c0;}
+  .adv-hero .ah-prog b{color:var(--cyan);font-size:16px;}
+  .adv-timeline{display:flex;flex-direction:column;gap:8px;}
+  .adv-card{position:relative;padding:11px 13px 11px 15px;border-radius:14px;border:1px solid rgba(130,120,255,.16);background:linear-gradient(180deg,rgba(29,38,76,.65),rgba(15,21,44,.8));transition:.18s;}
+  .adv-card::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:#2c3a6b;}
+  .adv-card.passed{border-color:rgba(122,229,130,.2);}
+  .adv-card.passed::before{background:linear-gradient(180deg,#7ae582,#3fae4f);}
+  .adv-card.current{border-color:rgba(255,209,102,.45);background:linear-gradient(120deg,rgba(255,209,102,.07),rgba(20,27,51,.7));}
+  .adv-card.current::before{background:linear-gradient(180deg,#ffe9ae,#ffb53e);box-shadow:0 0 10px rgba(255,200,100,.3);}
+  .adv-card.locked{opacity:.55;}
+  .adv-card .ac-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .adv-card .ac-name{font-size:13px;font-weight:800;color:#e8ecff;}
+  .adv-card .ac-badge{font-size:9px;padding:1px 7px;border-radius:6px;border:1px solid rgba(130,120,255,.25);color:#8b95c0;}
+  .adv-card .ac-syn{font-size:11px;color:#8b95c0;line-height:1.65;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .adv-card .ac-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:10px;color:#7f8cc0;margin-top:5px;}
+  .adv-bar{height:5px;border-radius:4px;background:#0a0f1f;overflow:hidden;margin-top:7px;border:1px solid rgba(130,120,255,.12);}
+  .adv-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd166,#f0a93b);}
+  @media (max-width:760px){
+    .craft-grid{grid-template-columns:1fr;}
+    .pet-grid{grid-template-columns:repeat(2,1fr);}
+    .tree-grid{grid-template-columns:1fr;}
+    .modal.tree-modal,.modal.pet-modal{max-width:94vw;}
+    .craft-hero{gap:8px;}
   }
 </style>
 </head>
@@ -635,7 +750,8 @@
         </div>
       </div>
       <div class="panel tab-page hidden" id="equipPage">
-        <h3 style="color:var(--gold);">⚔️ 装备精炼</h3>
+        <h3 style="color:var(--gold);">⚔️ 装备工坊</h3>
+        <div class="page-sub">精炼、洗练、宝石镶嵌与合成，一处完成。精炼材料专用于装备，宠物成长使用独立的「宠物精华」。</div>
         <div class="eq-subtabs">
           <button class="eq-subtab" id="eqSubInject" onclick="switchEqSub('invent')">🎒 装备</button>
           <button class="eq-subtab" id="eqSubRefine" onclick="switchEqSub('refine')">🔨 精炼</button>
@@ -661,13 +777,17 @@
         <div id="eqRefineWrap" class="hidden">
           <div id="refinePanel"></div>
         </div>
+        <div id="eqCraftWrap" class="hidden">
+          <div id="craftPanel"></div>
+        </div>
       </div>
       <div class="panel tab-page hidden" id="setsPage">
         <h3 style="color:var(--gold);">💠 套装图鉴</h3>
         <div id="setsGrid"></div>
       </div>
       <div class="panel tab-page hidden" id="adventurePage">
-        <h3 style="color:var(--gold);">📖 文字冒险 · 异界觉醒</h3>
+        <h3 style="color:var(--gold);">📖 冒险日志</h3>
+        <div class="page-sub">按章节推进主线；已通关章节可回看剧情，当前章节会显示目标与进度。</div>
         <div id="adventureWrap"></div>
       </div>
     </div>
@@ -1233,7 +1353,7 @@ async function supabaseSaveCloud(data){
   return true;
 }
 
-const EMPTY = {raceId:null,classId:null,lvl:1,xp:0,ch:1,stage:1,sub:0,kills:0,fails:0,maxLvl:1,storySeen:0,startedAt:Date.now(),lastSeen:Date.now(),mats:0,autoDismantle:false,talentPts:0,talents:{atk:0,hp:0,aspd:0,crit:0,ls:0,critDmg:0},essence:0,bag:[],equip:{weapon:null,armor:null,helmet:null,boots:null,trinket:null,cloak:null},sign:{last:"",count:0},weekKey:"",weekBase:0,skillTree:{flow:null,skillLv:{skill:1,skill2:1,ulti:1},pts:0},gems:[],pet:null,friends:[]};
+const EMPTY = {raceId:null,classId:null,lvl:1,xp:0,ch:1,stage:1,sub:0,kills:0,fails:0,maxLvl:1,storySeen:0,startedAt:Date.now(),lastSeen:Date.now(),mats:0,autoDismantle:false,talentPts:0,talents:{atk:0,hp:0,aspd:0,crit:0,ls:0,critDmg:0},essence:0,bag:[],equip:{weapon:null,armor:null,helmet:null,boots:null,trinket:null,cloak:null},sign:{last:"",count:0},weekKey:"",weekBase:0,skillTree:{flow:null,skillLv:{skill:1,skill2:1,ulti:1},pts:0,mut:{}},gems:[],pet:null,petBag:{},petEssence:0,friends:[]};
 let S = JSON.parse(JSON.stringify(EMPTY));
 let combat = null;   // {enemyHp,enemyMax,heroHp,heroMax,skillCd,skillReadyAt,attackAcc,winFlag}
 let saveTimer = 0;
@@ -1306,8 +1426,8 @@ function playerStats(){
   const def=8*defMulFinal*Math.pow(1.14,lvl-1)*(1+spb.defPct)+eq.defFlat;
   const aspd=1.0*aspdMulFinal*fm.aspd*(race.aspd||1)*(1+spb.aspdPct+lowAspd+tlAspd+petb.aspdPct)+(eq.aspd+gemb.aspd);
   const crit=Math.min(0.75,(cls.crit+(race.crit||0)+(pp.critAdd||0)+eq.crit+spb.critAdd+lowCrit+tlCrit+fm.critAdd+petb.crit+gemb.crit));
-  const critDmg=(cls.critDmg+eq.critDmg+spb.critDmgAdd+lowCritDmg+tlCritDmg+fm.critDmgAdd);
-  const ls=cls.lifesteal+(race.lifesteal||0)+eq.ls+spb.lsPct+tlLs+fm.ls;
+  const critDmg=(cls.critDmg+eq.critDmg+spb.critDmgAdd+lowCritDmg+tlCritDmg+fm.critDmgAdd+(petb.critDmg||0));
+  const ls=cls.lifesteal+(race.lifesteal||0)+eq.ls+spb.lsPct+tlLs+fm.ls+petb.ls;
   const dodge=(pp.dodge||0)+spb.dodge;
   const xpMul=(race.xp||1)*(1+(eq.xpPct||0)+petb.xp);
   return {atk,hp,def,aspd,crit,critDmg,ls,dodge,xpMul,lvl,race,cls, healUp:spb.healUp, dmgDown:spb.dmgDown, regen:spb.regen,
@@ -1389,6 +1509,7 @@ function load(){
     const d=JSON.parse(raw);
     if(!d||!RACES.find(r=>r.id===d.raceId)||!CLASSES.find(c=>c.id===d.classId)) return false;
     S=Object.assign(JSON.parse(JSON.stringify(EMPTY)),d);
+    if(typeof ensurePetBag==="function") ensurePetBag();
     return true;
   }catch(e){return false;}
 }
@@ -1890,7 +2011,12 @@ function onWin(gen){
   /* 装备掉落：小怪15%掉装+8%材料，精英/Boss必掉装且附送精炼材料 */
   const isElite=combat.meta.elite||combat.meta.boss;
   if(Math.random()<(isElite?0.25:0.05)){ const g=addGem(); log("💎 掉落宝石："+g.icon+g.name,"st"); }
-  if(combat.meta.boss&&Math.random()<0.15){ setTimeout(()=>{try{rollPetEgg();}catch(e){}},600); }
+  if(combat.meta.boss){
+    const pe=2+Math.floor(Math.random()*3);
+    S.petEssence=(S.petEssence||0)+pe;
+    log("🐾 首领掉落：宠物精华 ×"+pe,"st");
+    if(Math.random()<0.15){ setTimeout(()=>{try{rollPetEgg();}catch(e){}},600); }
+  }
   const chIdx=S.ch;
   if(isElite || Math.random()<0.15){
     const it=rollItem(S.lvl+ (isElite?2:0));
@@ -1995,9 +2121,14 @@ function damageEnemy(dmg,isSkill,color,sub){
     }
     combat.enemyHp=0;
     /* 爆裂：击杀时范围伤害（对精英/Boss无效） */
-    if(!combat.meta.elite&&!combat.meta.boss){
+    if(!combat.meta.elite&&!combat.meta.boss && !combat._onKillProc){
       const fx=mergedFx().filter(x=>x.fx.type==="onKill");
-      if(fx.length){ const f=fx[0].fx; damageEnemy(ps.atk*f.pct,true,"#ffb340"); }
+      if(fx.length){
+        const f=fx[0].fx;
+        combat._onKillProc=true;
+        damageEnemy(ps.atk*f.pct,true,"#ffb340");
+        combat._onKillProc=false;
+      }
     }
     /* 冥域回归：击败敌人回复生命 */
     const fk=mergedFx().filter(x=>x.fx.type==="onKillHeal")[0];
@@ -2069,9 +2200,9 @@ function tick(dt){
   /* 自动施放技能：仅在自动战斗模式开启时生效（手动模式下技能由玩家点击释放） */
   if(!manualMode && combat.heroHp>0&&combat.enemyHp>0){
     const cdList=[
-      {key:"ultiCd", cd:cls.ultimate.cd, sk:cls.ultimate, type:"ulti"},
-      {key:"skill2Cd", cd:cls.skill2.cd, sk:cls.skill2, type:"skill2"},
-      {key:"skillCd", cd:cls.skill.cd, sk:cls.skill, type:"skill"}
+      {key:"ultiCd", cd:skillCdOf("ulti"), sk:cls.ultimate, type:"ulti"},
+      {key:"skill2Cd", cd:skillCdOf("skill2"), sk:cls.skill2, type:"skill2"},
+      {key:"skillCd", cd:skillCdOf("skill"), sk:cls.skill, type:"skill"}
     ];
     for(const c of cdList){
       if(combat[c.key]<=0){ combat[c.key]=c.cd; activateSkill(ps,c.sk,c.type); break; }
@@ -2272,7 +2403,7 @@ let thisSkillCrit=false;
 function activateSkill(ps,sk,type){
   const meta=combat?combat.meta:{name:"敌人"};
   const cls=ps.cls, rid=S.raceId||"human";
-  const nm=skillNameOf(cls.id,rid,type);
+  const nm=skillDisplayName(cls.id,rid,type);
   const tag=type==="ulti"?"【大招】":(type==="skill2"?"【技能】":"");
   const fx=applyFlowFx(skillFxOf(cls.id,rid,type)||{},type);
   const atk=ps.atk;
@@ -2382,6 +2513,7 @@ function activateSkill(ps,sk,type){
 function modal(title,bodyHtml,bottomHtml,onClose,btnList){
   gamePaused=true;
   const box=$("modalBox");
+  box.classList.remove("tree-modal","pet-modal");
   box.innerHTML='<div class="m-title">'+title+'</div><div class="m-body">'+bodyHtml+'</div>';
   if(bottomHtml) box.innerHTML+='<div class="offline-list" style="margin-top:12px;">'+bottomHtml+'</div>';
   const bar=document.createElement("div");
@@ -3089,13 +3221,11 @@ function switchEqSub(t){
   eqSubTab=t;
   $("eqInventWrap").classList.toggle("hidden", t!=="invent");
   $("eqRefineWrap").classList.toggle("hidden", t!=="refine");
-  let cw=$("eqCraftWrap");
-  if(t==="craft"&&!cw){ cw=document.createElement("div"); cw.id="eqCraftWrap"; $("eqRefineWrap").parentNode.insertBefore(cw,$("eqRefineWrap").nextSibling); }
-  if(cw) cw.classList.toggle("hidden", t!=="craft");
+  $("eqCraftWrap").classList.toggle("hidden", t!=="craft");
   const a=$("eqSubInject"), b=$("eqSubRefine"), c=$("eqSubCraft");
   if(a&&b&&c){ a.classList.toggle("on",t==="invent"); b.classList.toggle("on",t==="refine"); c.classList.toggle("on",t==="craft"); }
   if(t==="refine") renderRefinePanel();
-  if(t==="craft"&&typeof openCraft==="function") openCraft();
+  if(t==="craft") renderCraftPanel();
 }
 /* 角色页详情：头像/属性/种族/职业 */
 function renderHeroDetail(){
@@ -3143,7 +3273,7 @@ function renderStats(){
     '<div>暴击伤害 <b>'+Math.round(ps.critDmg*100)+'%</b></div>'+
     '<div>吸血 <b>'+Math.round(ps.ls*100)+'%</b></div>'+
     '<div>经验加成 <b>+'+Math.round((ps.xpMul-1)*100)+'%</b></div>'+
-    '<div style="margin-top:6px;font-size:11px;color:#8b95c0;">职业：'+clsName+' ｜ 技能：'+ps.cls.skill.name+'</div>';
+    '<div style="margin-top:6px;font-size:11px;color:#8b95c0;">职业：'+clsName+' ｜ 技能：'+skillDisplayName(ps.cls.id,S.raceId,"skill")+'</div>';
   $("raceTrait").textContent="天赋："+ps.race.traitDesc;
   /* 侧边栏三围概览 */
   const mini=$("statMini");
@@ -3152,6 +3282,7 @@ function renderStats(){
   }
   renderEquipList();
   renderRefinePanel();
+  if(typeof eqSubTab!=="undefined" && eqSubTab==="craft" && document.getElementById("craftPanel")) renderCraftPanel();
 }
 /* 装备背包页：左侧已装备文字列表 + 右侧背包 */
 function renderEquipList(){
@@ -3292,9 +3423,10 @@ function renderSkill(){
     {def:cls.ultimate, type:"ulti", key:"ultiCd"}
   ];
   configs.forEach(cfg=>{
-    const nm=skillNameOf(cls.id,S.raceId,cfg.type);
+    const nm=skillDisplayName(cls.id,S.raceId,cfg.type);
     const s=document.createElement("div"); s.className="skill"+(cfg.type==="ulti"?" ulti-slot":"");
     s.innerHTML='<div class="ic">'+cfg.def.icon+'</div><div class="nm">'+nm+'</div>';
+    s.title=nm;
     const cd=document.createElement("div"); cd.className="cd"; cd.textContent="";
     s.appendChild(cd); box.appendChild(s);
     /* 手动模式：点击释放技能；自动模式：点击无效果 */
@@ -3303,7 +3435,7 @@ function renderSkill(){
       const key=cfg.key, ckey=combat[key];
       if(ckey>0){ dlog("⏳ "+nm+" 冷却中（"+ckey.toFixed(1)+"s）","st"); return; }
       const ps=playerStats();
-      combat[key]=cfg.def.cd;
+      combat[key]=skillCdOf(cfg.type);
       activateSkill(ps,cfg.def,cfg.type);
     });
     s.style.cursor="pointer";
@@ -3409,54 +3541,54 @@ function renderProgress(){
 function renderAdventure(){
   const g=$("adventureWrap");
   if(!g) return;
+  if(!S.raceId||!S.classId){
+    g.innerHTML='<div class="adv-hero"><div><div class="ah-race">尚未觉醒</div><div class="ah-sub">先在「新游戏」中选择种族与职业，才能查看属于你的主线命运。</div></div></div>';
+    return;
+  }
   const chs=currentChapters();
   const race=RACES.find(r=>r.id===S.raceId);
   const clsName=classNameOf(S.classId,S.raceId);
-  const total=chs.length, read=Math.min(S.storySeen||0,total);
-  const shown=Math.min(total,(S.storySeen||0)+1); /* 显示：已通关章节 + 当前进行中章节 */
+  const total=chs.length;
+  const read=Math.min(S.storySeen||0,total);
   const done=(read>=total);
-  let html='<div class="adv-state-bar">'+
-    '<span>📖 主线 · <b class="as-race">'+(race?race.name:"?")+'</b>「'+(S.raceId?"":"未觉醒")+clsName+'」</span>'+
-    ((read>0)?'<span>已解锁 <b>'+read+'</b> 章</span>':'<span>主线进行中</span>')+
-    (done?'<span style="color:#ff4fa3;">🎉 已通关主线</span>':'')+
+  const deep=(S.ch>total);
+  const plain=t=>String(t||"").replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim();
+  let html='<div class="adv-hero">'+
+    '<div><div class="ah-race">'+(race?race.icon+' '+race.name:"?")+' · '+clsName+'</div>'+
+      '<div class="ah-sub">'+(done?"主线已通关，命运仍在无尽深处延伸":"沿着章节推进，击败首领解锁下一段剧情")+'</div></div>'+
+    '<div class="ah-prog">已通关 <b>'+read+'</b> / '+total+'<br><span style="font-size:10px;">当前：第 '+S.ch+' 章 · 第 '+S.stage+' 关</span></div>'+
+  '</div>';
+  html+='<div class="section-title">章节进度</div><div class="adv-timeline">';
+  for(let i=0;i<total;i++){
+    const ch=chapterData(i+1);
+    const passed=(S.storySeen||0)>i;
+    const cur=(S.ch===i+1);
+    const syn=plain(ch.intro);
+    const short=syn.length>88?syn.slice(0,88)+"…":syn;
+    let cls="adv-card "+(passed?"passed":(cur?"current":"locked"));
+    let badge=passed?'<span class="pill green">✅ 已通关</span>':(cur?'<span class="pill gold">⚔️ 进行中</span>':'<span class="pill">未解锁</span>');
+    let meta=passed?('首领：'+(ch.boss||"?")):(cur?('首领：??? ｜ 推进到第 6 关揭晓'):'通关上一章后开启');
+    html+='<div class="'+cls+'" '+(passed?'style="cursor:pointer;" onclick="mainStoryModal('+(i+1)+')"':'')+'>'+
+      '<div class="ac-top"><span class="ac-name">'+((passed&&done&&i===total-1)?"🌅":(cur?"⚔️":"📖"))+' '+ch.name+'</span>'+badge+'</div>'+
+      '<div class="ac-syn">'+(passed?short:(cur?'你正在这条主线上。击败本章首领后，完整剧情将在此展开。':'这一章的命运尚未向你展开。'))+'</div>'+
+      '<div class="ac-meta"><span>'+meta+'</span>'+(passed?'<span style="color:#7f8cc0;">点击回看剧情</span>':'')+'</div>'+
+      (cur?'<div class="adv-bar"><i style="width:'+Math.max(4,Math.min(100,(S.stage/6)*100))+'%"></i></div>':'')+
     '</div>';
-  if(!S.raceId||!S.classId){
-    html+='<div class="adv-scene"><div class="adv-text">先在「新游戏」中觉醒种族与职业，才能查看属于你的主线命运。</div></div>';
-    g.innerHTML=html; return;
   }
-  /* 剧情全文：序章 + 已解锁章节的完整正文（原手记内容） */
-  html+='<div class="adv-kicker" style="margin:14px 2px 6px;color:#ffd97a;font-weight:700;">📖 序章 · 觉醒</div>'+
-    '<div class="story-block"><div class="story-ch">🌌 觉醒</div><div class="story-body">'+STORY_INTRO.replace(/\{cls\}/g,clsName)+'</div></div>';
-  for(let i=0;i<Math.min(shown,total);i++){
-    const ch=chapterData(i+1);
-    const unlocked=(S.storySeen||0)>(i);
-    const curCh=(S.ch===i+1);
-    html+='<div class="story-block'+(unlocked?'':' locked')+'"><div class="story-ch">'+(unlocked?(done&&i===total-1?'🌅':'📖'):(curCh?'⚔️':'🔍'))+' '+ch.name+(curCh&&!unlocked?' <span style="color:#ffb340;font-size:11px;font-weight:400;">· 进行中</span>':'')+'</div>'+
-      (unlocked?('<div class="story-body">'+ch.intro.replace(/\n/g,'<br>')+'</div>')
-        :'<div class="story-body">'+(curCh?'你正在这条主线上。击败本章首领后，完整剧情将在此展开。':'本章的主线仍在迷雾之中……击败本章首领后，故事将在此展开。')+'</div>')+
-      '</div>';
+  if(deep){
+    html+='<div class="adv-card current"><div class="ac-top"><span class="ac-name">🌌 '+DEEP.name+' · 第 '+(S.ch-total)+' 层</span><span class="pill pink">无尽</span></div>'+
+      '<div class="ac-syn">主线之后的世界仍在延伸，每一层都有更强的回响。</div><div class="ac-meta"><span>首领：'+DEEP.boss+'</span><span>当前：第 '+S.stage+' 关</span></div></div>';
   }
-  /* 主线章节列表 */
-  html+='<div class="eq-section" style="margin-top:16px;">🗺️ 章节进度</div>';
-  for(let i=0;i<Math.min(shown,total);i++){
-    const ch=chapterData(i+1);
-    const unlocked=(S.storySeen||0)>(i); /* 剧情已解锁可重读 */
-    const isCur=(S.ch===i+1);
-    const stTxt=unlocked?(isCur?'· 当前':'· 已解锁'):(isCur?'· 进行中':'· 未解锁');
-    html+='<div class="set-card'+(unlocked?' own':'')+'" style="cursor:'+(unlocked?'pointer':'default')+';" '+
-      (unlocked?'onclick="mainStoryModal('+(i+1)+')"':'')+'>'+
-      '<div class="set-row"><span class="set-name" style="color:'+(unlocked?'#ffd97a':'#c9d2f5')+';">'+
-      (done&&i===total-1?'🌅':(isCur?'⚔️':'📖'))+' '+ch.name+'</span>'+
-      '<span class="set-prog">'+stTxt+'</span></div>'+
-      '<div style="font-size:11px;color:#8b95c0;margin-top:2px;">首领：'+(unlocked?(ch.boss||"?"):"？？？")+'</div>'+
-      (unlocked?'<div style="font-size:11px;color:#7f8cc0;margin-top:3px;">点击重读本章剧情</div>'
-        :'<div style="font-size:11px;color:#556;margin-top:3px;">'+(isCur?'通关本章首领后解锁完整剧情。':'击败本章首领后，故事继续展开……')+'</div>')+
-      '</div>';
-  }
-  if(shown>=total){ /* 全部显示完，无更多章节 */
-    html+='<div style="color:#8b95c0;font-size:12px;margin-top:6px;">命运仍在前方延伸……</div>';
-  }
+  html+='</div>';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#7f8cc0;">'+
+    '<span>💡 点击已通关章节可以重读剧情</span>'+
+    '<button class="reset-small" onclick="showPrologueModal()">📜 回看序章</button>'+
+  '</div>';
   g.innerHTML=html;
+}
+function showPrologueModal(){
+  const clsName=classNameOf(S.classId,S.raceId);
+  modal("📜 序章 · 觉醒",'<div style="font-size:13px;line-height:1.9;color:#c9d2f5;">'+STORY_INTRO.replace(/\{cls\}/g,clsName)+'</div>','',null,[{label:"关闭",cls:"btn",fn:()=>{}}]);
 }
 /* ================= 新系统：技能树/宠物/签到/宝石/词缀/好友/联赛 ================= */
 const SKILL_FLOWS={
@@ -3493,6 +3625,70 @@ const SKILL_FLOW_NAMES={
  priest:{holy:{skill:"神圣治愈",skill2:"圣言壁",ulti:"神恩天佑"},bless:{skill:"祝福战歌",skill2:"圣言佑",ulti:"神恩降临"},smite:{skill:"神圣惩戒",skill2:"圣言击",ulti:"神恩天罚"}},
  assassin:{crit:{skill:"影袭穿心",skill2:"淬毒影",ulti:"绝命暴杀"},poison:{skill:"影袭蚀骨",skill2:"淬毒腐蚀",ulti:"绝命剧毒"},ambush:{skill:"影袭连环",skill2:"淬毒迷",ulti:"绝命千影"}}
 };
+/* 技能树分叉：每项技能在 Lv5 / Lv10 各选一个变异分支，选择可随时改回 */
+const SKILL_MUTS={
+  5:[
+    {id:"sharp",name:"锋锐",icon:"⚔️",desc:"技能伤害 +25%",fx:{xMul:1.25}},
+    {id:"swift",name:"疾咏",icon:"💨",desc:"技能冷却 -20%",fx:{cdMul:0.8}}
+  ],
+  10:[
+    {id:"doom",name:"毁灭",icon:"💥",desc:"技能伤害 +40%，治疗/护盾 +15%",fx:{xMul:1.4,healMul:1.15,shieldMul:1.15}},
+    {id:"echo",name:"回响",icon:"🌀",desc:"冷却 -25%，增益/持续效果 +20%",fx:{cdMul:0.75,bufMul:1.2,dotsMul:1.2}}
+  ]
+};
+function ensureSkillTree(){
+  if(!S.skillTree) S.skillTree={flow:null,skillLv:{skill:1,skill2:1,ulti:1},pts:0,mut:{}};
+  const st=S.skillTree;
+  st.skillLv=st.skillLv||{skill:1,skill2:1,ulti:1};
+  st.pts=st.pts||0;
+  st.mut=st.mut||{};
+  ["skill","skill2","ulti"].forEach(t=>{ st.skillLv[t]=st.skillLv[t]||1; st.mut[t]=st.mut[t]||{}; });
+  return st;
+}
+function getSkillMut(type,tier){
+  const st=S&&S.skillTree;
+  if(!st||!st.mut||!st.mut[type]) return null;
+  const id=st.mut[type][tier];
+  return id?((SKILL_MUTS[tier]||[]).find(m=>m.id===id)||null):null;
+}
+function mutCdMul(type){
+  let m=1;
+  [5,10].forEach(t=>{ const x=getSkillMut(type,t); if(x&&x.fx&&x.fx.cdMul) m*=x.fx.cdMul; });
+  return m;
+}
+function skillCdOf(type){
+  const cls=CLASSES.find(c=>c.id===S.classId);
+  if(!cls) return 8;
+  const base=type==="skill"?cls.skill.cd:(type==="skill2"?cls.skill2.cd:cls.ultimate.cd);
+  return Math.max(2,Math.round(base*mutCdMul(type)*10)/10);
+}
+function skillMutTag(type){
+  const m10=getSkillMut(type,10), m5=getSkillMut(type,5);
+  return m10?m10.name:(m5?m5.name:"");
+}
+function skillDisplayName(clsId,rid,type){
+  let nm=skillNameOf(clsId,rid,type);
+  if(S&&S.classId===clsId){
+    const tag=skillMutTag(type);
+    if(tag) nm+="·"+tag;
+  }
+  return nm;
+}
+function applySkillMut(fx,type){
+  if(!fx) return fx;
+  [5,10].forEach(t=>{
+    const m=getSkillMut(type,t);
+    if(!m||!m.fx) return;
+    const f=m.fx;
+    if(f.xMul&&typeof fx.x==="number") fx.x=Math.round(fx.x*f.xMul*10)/10;
+    if(f.healMul&&typeof fx.heal==="number") fx.heal=Math.min(0.95,fx.heal*f.healMul);
+    if(f.shieldMul&&typeof fx.shield==="number") fx.shield=Math.round(fx.shield*f.shieldMul*10)/10;
+    if(f.bufMul&&typeof fx.buf==="number") fx.buf=fx.buf*f.bufMul;
+    if(f.dotsMul&&typeof fx.dots==="number") fx.dots=Math.min(0.5,fx.dots*f.dotsMul);
+    if(f.nAdd) fx.n=(fx.n||1)+f.nAdd;
+  });
+  return fx;
+}
 function getFlow(){
   const st=S&&S.skillTree;
   if(!st||!st.flow||!S.classId) return null;
@@ -3525,18 +3721,31 @@ function applyFlowFx(oriFx,type){
     if(mm.dotsMul&&typeof fx.dots==="number") fx.dots=Math.min(0.5,fx.dots*mm.dotsMul);
     if(mm.durAdd) fx.dur=(fx.dur||0)+mm.durAdd;
   }
-  return fx;
+  return applySkillMut(fx,type);
 }
 /* ===== 宠物 ===== */
 const PETS=[
- {id:"wolf",name:"霜狼",icon:"🐺",desc:"攻击 +6%",bonus:{atkPct:0.06}},
- {id:"tree",name:"树灵",icon:"🌳",desc:"生命 +10%",bonus:{hpPct:0.10}},
- {id:"fire",name:"火灵",icon:"🔥",desc:"攻速 +8%",bonus:{aspdPct:0.08}},
- {id:"ghost",name:"幽魂",icon:"👻",desc:"暴击 +5%",bonus:{crit:0.05}},
- {id:"dragonlet",name:"幼龙",icon:"🐉",desc:"全属性 +4%",bonus:{atkPct:0.04,hpPct:0.04,aspdPct:0.04}}
+ {id:"snowwolf",name:"雪域银狼",icon:"🐺",desc:"攻击 +8%",bonus:{atkPct:0.08}},
+ {id:"ancienttree",name:"古木之灵",icon:"🌳",desc:"生命 +12%",bonus:{hpPct:0.12}},
+ {id:"flame",name:"赤焰精灵",icon:"🔥",desc:"攻速 +10%",bonus:{aspdPct:0.10}},
+ {id:"starghost",name:"星辉幽魂",icon:"👻",desc:"暴击 +6%",bonus:{crit:0.06}},
+ {id:"dawn",name:"晨曦幼龙",icon:"🐉",desc:"全属性 +5%",bonus:{atkPct:0.05,hpPct:0.05,aspdPct:0.05}},
+ {id:"tide",name:"潮汐鲛灵",icon:"🧜",desc:"吸血 +5%",bonus:{ls:0.05}},
+ {id:"thunder",name:"雷鸣狮鹫",icon:"🦅",desc:"暴击伤害 +12%",bonus:{critDmg:0.12}},
+ {id:"mooncat",name:"月影猫又",icon:"🐈‍⬛",desc:"经验获取 +8%",bonus:{xp:0.08}}
 ];
+function ensurePetBag(){
+  const alias={wolf:"snowwolf",tree:"ancienttree",fire:"flame",ghost:"starghost",dragonlet:"dawn"};
+  if(S.pet && S.pet.id && alias[S.pet.id]) S.pet.id=alias[S.pet.id];
+  if(!S.petBag || typeof S.petBag!=="object") S.petBag={};
+  Object.keys(S.petBag).forEach(k=>{ if(alias[k]){ S.petBag[alias[k]]=S.petBag[k]; delete S.petBag[k]; } });
+  if(S.pet && S.pet.id && !S.petBag[S.pet.id]) S.petBag[S.pet.id]=S.pet.lv||1;
+  return S.petBag;
+}
+function petUpgradeCost(lv){ return 6+(lv||1)*3; }
 function petBonus(){
-  const b={atkPct:0,hpPct:0,aspdPct:0,crit:0,ls:0,xp:0};
+  if(typeof ensurePetBag==="function") ensurePetBag();
+  const b={atkPct:0,hpPct:0,aspdPct:0,crit:0,ls:0,xp:0,critDmg:0};
   const p=S.pet&&PETS.find(x=>x.id===S.pet.id);
   if(p){ const lv=S.pet.lv||1; Object.keys(b).forEach(k=>{ if(p.bonus[k]) b[k]=p.bonus[k]*(1+0.1*(lv-1)); }); }
   return b;
@@ -3544,20 +3753,69 @@ function petBonus(){
 function rollPetEgg(){
   if(typeof log!=="function") return;
   const p=PETS[Math.floor(Math.random()*PETS.length)];
-  if(!S.pet||S.pet.id!==p.id){ S.pet={id:p.id,lv:1}; log("🐣 获得宠物："+p.icon+p.name+"！","good"); }
-  else { S.pet.lv=(S.pet.lv||1)+1; log("🐣 宠物 "+p.icon+p.name+" 升级至 Lv."+S.pet.lv+"！","good"); }
+  const bag=ensurePetBag();
+  if(!bag[p.id]){
+    bag[p.id]=1;
+    S.petEssence=(S.petEssence||0)+8;
+    if(!S.pet||!S.pet.id) S.pet={id:p.id,lv:1};
+    log("🐣 解锁宠物："+p.icon+p.name+"！并获宠物精华 ×8","good");
+  }else{
+    const gain=6+Math.floor(Math.random()*5);
+    S.petEssence=(S.petEssence||0)+gain;
+    log("🐣 重复宠物 "+p.icon+p.name+" 转化为宠物精华 ×"+gain,"st");
+  }
   if(typeof save==="function") save();
+  renderStats();
 }
 function openPet(){
-  const p=S.pet?PETS.find(x=>x.id===S.pet.id):null;
-  let h='<div style="font-size:12px;color:#8b95c0;margin-bottom:8px;">宠物提供常驻加成，击败BOSS有概率获得宠物蛋</div>';
-  if(p){
-    h+='<div style="text-align:center;padding:14px;background:rgba(10,15,31,.6);border:1px solid var(--line);border-radius:12px;"><div style="font-size:44px;">'+p.icon+'</div><div style="font-size:16px;font-weight:800;color:var(--gold);margin-top:4px;">'+p.name+' Lv.'+(S.pet.lv||1)+'</div><div style="font-size:12px;color:#9aa5d4;">'+p.desc+'</div></div>';
-  }else{
-    h+='<div style="text-align:center;padding:14px;color:#8b95c0;">尚未获得宠物，挑战BOSS吧！</div>';
-  }
-  h+='<div class="pts-line" style="margin-top:10px;">宠物图鉴</div>'+PETS.map(x=>{ const owns=S.pet&&S.pet.id===x.id; return '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;">'+x.icon+' <b>'+x.name+'</b> <span style="color:#8b95c0;font-size:11px;">'+x.desc+'</span>'+(owns?'<span style="color:var(--cyan);margin-left:auto;">已拥有 Lv.'+(S.pet.lv||1)+'</span>':'<span style="color:#556;margin-left:auto;">未获得</span>')+'</div>'; }).join('');
-  if(typeof modal==="function") modal("🐾 宠物系统", h);
+  ensurePetBag();
+  const bag=S.petBag;
+  const active=S.pet&&PETS.find(x=>x.id===S.pet.id);
+  const ess=S.petEssence||0;
+  let h='<div class="pet-hero">'+
+    '<div class="ph-emoji">'+(active?active.icon:"🥚")+'</div>'+
+    '<div style="flex:1;min-width:150px;"><div style="font-size:15px;font-weight:800;color:#ffd97a;">'+(active?active.name+" Lv."+(S.pet.lv||1):"尚未出战宠物")+'</div>'+
+      '<div style="font-size:11px;color:#9aa5d4;line-height:1.7;margin-top:2px;">'+(active?active.desc:"击败 BOSS 有概率获得宠物蛋；重复宠物会转化为精华" )+'</div>'+
+      '<div class="pet-cost">宠物精华 <b>'+ess+'</b> ｜ 升级消耗精华，不占用精炼材料</div>'+
+    '</div>'+
+    '<div class="pill green">图鉴 '+Object.keys(bag).length+' / 8</div>'+
+  '</div>';
+  h+='<div class="section-title">宠物图鉴 · 8 只</div><div class="pet-grid">';
+  PETS.forEach(p=>{
+    const lv=bag[p.id]||0, on=active&&active.id===p.id;
+    h+='<div class="pet-card '+(lv?'owned ':'locked ')+(on?'active':'')+'">'+
+      (on?'<div class="active-tag">出战</div>':'')+
+      '<div class="pe">'+p.icon+'</div><div class="pn">'+p.name+'</div>'+
+      '<div class="pd">'+p.desc+'</div>'+
+      '<div class="pl">'+(lv?('Lv.'+lv+' ｜ 加成 ×'+(1+0.1*(lv-1)).toFixed(1)):'未解锁')+'</div>'+
+      (lv?('<div class="pa"><button class="reset-small" onclick="setActivePet(\''+p.id+'\')" '+(on?'disabled':'')+'>'+(on?'出战中':'出战')+'</button>'+
+        '<button class="reset-small" style="color:#c77dff;" onclick="upgradePet(\''+p.id+'\')" '+(lv>=30||ess<petUpgradeCost(lv)?'disabled':'')+'>升级 '+(lv>=30?'MAX':petUpgradeCost(lv))+'</button></div>'):
+        '<div class="pa"><span style="font-size:9px;color:#556;">通关 BOSS 获取</span></div>')+
+    '</div>';
+  });
+  h+='</div><div class="craft-tip" style="margin-top:10px;">💡 宠物精华来源：击败 BOSS 必得、重复宠物转化、签到第 7 天、周任务。每级提升 10% 基础加成，最高 Lv.30。</div>';
+  if(typeof modal==="function") modal("🐾 宠物系统", h,'',null,[{label:"关闭",cls:"btn",fn:()=>{}}]);
+  $("modalBox").classList.add("pet-modal");
+}
+function setActivePet(id){
+  const bag=ensurePetBag();
+  if(!bag[id]){ log("尚未拥有这只宠物","bad"); return; }
+  S.pet={id:id,lv:bag[id]};
+  save(); renderStats(); openPet();
+  log("🐾 已切换出战宠物","good");
+}
+function upgradePet(id){
+  const bag=ensurePetBag();
+  const lv=bag[id]||0;
+  if(!lv){ log("尚未拥有这只宠物","bad"); return; }
+  if(lv>=30){ log("宠物已达最高等级","bad"); return; }
+  const cost=petUpgradeCost(lv);
+  if((S.petEssence||0)<cost){ log("宠物精华不足，需要 "+cost+"（当前 "+(S.petEssence||0)+"）","bad"); return; }
+  S.petEssence-=cost;
+  bag[id]=lv+1;
+  if(S.pet&&S.pet.id===id) S.pet.lv=lv+1;
+  save(); renderStats(); openPet();
+  log("🐾 宠物升级成功 → Lv."+(lv+1),"good");
 }
 /* ===== 签到/周任务 ===== */
 const SIGN_REWARDS=[
@@ -3567,7 +3825,7 @@ const SIGN_REWARDS=[
  {d:4,n:"随机宝石 ×2",get:()=>{addGem();addGem();}},
  {d:5,n:"精良装备 ×1",get:()=>{const it=rollItem(Math.max(1,S.lvl)); it.quality=Math.max(it.quality,4); it.qName=EQ_QUALITY[it.quality].name; onLootItem(it);}},
  {d:6,n:"精炼材料 ×30",get:()=>{S.mats=(S.mats||0)+30;}},
- {d:7,n:"随机宠物蛋 ×1",get:()=>{rollPetEgg();}}
+ {d:7,n:"随机宠物蛋 ×1 + 宠物精华 ×20",get:()=>{rollPetEgg();S.petEssence=(S.petEssence||0)+20;}}
 ];
 function todayKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function weekKey(){const d=new Date();const day=(d.getDay()+6)%7;const m=new Date(d);m.setDate(d.getDate()-day);return m.getFullYear()+"-"+String(m.getMonth()+1).padStart(2,"0")+"-"+String(m.getDate()).padStart(2,"0");}
@@ -3610,8 +3868,8 @@ function openDaily(){
 }
 function claimWeekly(){
   if(weekKills()<100){ log("本周击杀不足 100","bad"); return; }
-  S._weekClaimed=true; S.weekKey=weekKey(); S.mats=(S.mats||0)+50; save();
-  log("🎁 本周任务奖励：精炼材料 ×50","good");
+  S._weekClaimed=true; S.weekKey=weekKey(); S.mats=(S.mats||0)+50; S.petEssence=(S.petEssence||0)+15; save();
+  log("🎁 本周任务奖励：精炼材料 ×50、宠物精华 ×15","good");
   openDaily();
 }
 /* ===== 宝石 ===== */
@@ -3640,43 +3898,87 @@ function gemBonus(){
 }
 function synthGems(){
   S.gems=S.gems||[];
-  const cntMap={};
-  S.gems.forEach(g=>{const k=g.id+"_"+g.lv; cntMap[k]=(cntMap[k]||0)+1;});
-  const nc=[];
-  Object.keys(cntMap).forEach(k=>{
-    const parts=k.split("_"); let lvl=Number(parts[1]), c=cntMap[k];
-    while(c>=3&&lvl<3){ const n=Math.floor(c/3); c=c%3+n; lvl++; }
-    for(let i=0;i<c;i++) nc.push({id:parts[0],lv:lvl});
+  const before=S.gems.length;
+  const counts={};
+  S.gems.forEach(g=>{ const k=g.id; if(!counts[k]) counts[k]={1:0,2:0,3:0}; counts[k][g.lv||1]=(counts[k][g.lv||1]||0)+1; });
+  let merged=0;
+  Object.keys(counts).forEach(id=>{
+    for(let lv=1;lv<=2;lv++){
+      while(counts[id][lv]>=3){
+        counts[id][lv]-=3;
+        counts[id][lv+1]=(counts[id][lv+1]||0)+1;
+        merged++;
+      }
+    }
   });
-  S.gems=nc; save(); log("💎 宝石合成完成！","good");
+  if(!merged){ log("💎 没有可合成的宝石：同色同等级 3 颗才能合成","bad"); return; }
+  const nc=[];
+  Object.keys(counts).forEach(id=>{ [1,2,3].forEach(lv=>{ for(let i=0;i<(counts[id][lv]||0);i++) nc.push({id:id,lv:lv}); }); });
+  S.gems=nc; save();
+  log("💎 宝石合成完成：消耗 3×"+merged+" 颗，现有 "+nc.length+" 颗（"+before+" → "+nc.length+"）","good");
+  renderAll(); renderCraftPanel();
 }
 /* ===== 强化工坊（洗练/镶嵌） ===== */
-function openCraft(){
-  const eq=S.equip||{}, bag=S.bag||[];
-  let h='<div style="font-size:12px;color:#8b95c0;margin-bottom:6px;">洗练消耗 15 精炼材料随机重铸一条词缀；镶嵌需背包有宝石</div><div class="pts-line">🔨 洗练</div>';
-  const items=[...bag.map((it,i)=>({it,src:"bag",idx:i})), ...EQ_SLOTS.map(s=>({it:eq[s.key],src:"eq",key:s.key})).filter(x=>x.it)];
-  if(!items.length){ h+='<div style="color:#8b95c0;padding:8px;">背包与装备栏暂无物品</div>'; }
-  else{
-    h+=items.map(o=>{
-      const it=o.it, qc=(EQ_QUALITY[it.quality]&&EQ_QUALITY[it.quality].color)||"#fff";
-      const gicon=it.gem?((GEM_TYPES.find(g=>g.id===it.gem.id)||{}).icon||"💎"):"";
-      return '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(130,120,255,.06);font-size:12px;"><span style="color:'+qc+';">'+(it.icon||"🎽")+'</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+it.qName+'·'+it.name+(it.gem?(" "+gicon+"Lv"+(it.gem.lv||1)):"")+'</span>'+
-        '<button class="reset-small" onclick="rerollItem(\''+o.src+'\','+(o.src==="bag"?o.idx:"'"+o.key+"'")+')">洗练</button>'+
-        '<button class="reset-small" onclick="openGemSocket(\''+o.src+'\','+(o.src==="bag"?o.idx:"'"+o.key+"'")+')">镶嵌</button>'+
-        (it.gem?'<button class="reset-small" style="color:#ff5d5d;" onclick="removeGem(\''+o.src+'\','+(o.src==="bag"?o.idx:"'"+o.key+"'")+')">取下</button>':'')+'</div>';
-    }).join('');
-  }
-  h+='<div class="pts-line" style="margin-top:12px;">💎 宝石背包（'+((S.gems||[]).length)+'颗）</div>'+
-    ((S.gems&&S.gems.length)?'<div style="font-size:12px;line-height:2;">'+S.gems.map(g=>{const gd=GEM_TYPES.find(x=>x.id===g.id);return '<span style="margin-right:10px;">'+gd.icon+'<b>'+(g.lv||1)+'</b></span>';}).join('')+'<br><button class="reset-small" style="color:var(--gold);margin-top:4px;" onclick="synthGems()">⬆ 3合1升级</button></div>':'<div style="color:#8b95c0;padding:4px;">暂无宝石（签到/掉落获得）</div>');
-  modal("🔮 强化工坊（洗练/镶嵌）", h,'',null,[{label:"关闭",cls:"btn",fn:()=>{}}]);
+function craftCard(s){
+  const it=(S.equip||{})[s.key];
+  if(!it) return '<div class="craft-card" style="opacity:.5;"><div class="cc-top"><span class="cc-name">'+s.icon+' '+s.name+'</span><span class="pill">空槽位</span></div><div class="cc-meta">装备后可以在这里精炼、洗练与镶嵌。</div></div>';
+  const qc=(EQ_QUALITY[it.quality]&&EQ_QUALITY[it.quality].color)||"#fff";
+  const gd=it.gem?GEM_TYPES.find(x=>x.id===it.gem.id):null;
+  return '<div class="craft-card">'+
+    '<div class="cc-top"><span class="cc-name" style="color:'+qc+';">['+it.qName+'] '+it.name+(it.refine?(' <b style="color:#ffb340;">+'+it.refine+'</b>'):'')+'</span><span class="pill gold">'+s.name+'</span></div>'+
+    '<div class="cc-meta">评分 <b style="color:#7ae582;">'+itemScore(it)+'</b> ｜ '+(it.setKey?('套装 '+(it.setName||'')):'散件')+'</div>'+
+    '<div class="cc-meta">'+(gd?('<span class="gem-slot">'+gd.icon+' '+gd.name+' Lv.'+(it.gem.lv||1)+'</span>'):'<span style="color:#556;">宝石孔：空</span>')+'</div>'+
+    '<div class="cc-actions">'+
+      '<button class="reset-small" style="color:#ffd166;" onclick="rerollItem(\'eq\',\''+s.key+'\')">🔨 洗练（15材料）</button>'+
+      '<button class="reset-small" style="color:#9be8ff;" onclick="openGemSocket(\'eq\',\''+s.key+'\')">💎 '+(gd?'更换':'镶嵌')+'</button>'+
+      (gd?'<button class="reset-small" style="color:#ff9ad1;" onclick="removeGem(\'eq\',\''+s.key+'\')">取下</button>':'')+
+    '</div></div>';
+}
+function gemInventoryHtml(){
+  const gems=S.gems||[];
+  if(!gems.length) return '<div class="craft-empty">💎 暂无宝石<br><span style="font-size:11px;">签到、战斗掉落获得</span></div>';
+  const counts={};
+  gems.forEach(g=>{ const k=(g.id||"gem")+"_"+(g.lv||1); counts[k]=(counts[k]||0)+1; });
+  return '<div class="gem-inv">'+Object.keys(counts).map(k=>{
+    const parts=k.split("_"); const gd=GEM_TYPES.find(x=>x.id===parts[0])||{icon:"💎",name:"宝石"};
+    const lv=Number(parts[1]);
+    return '<span class="gem-chip g'+lv+'">'+gd.icon+' '+gd.name+' <b>Lv.'+lv+'</b> <small>×'+counts[k]+'</small></span>';
+  }).join('')+'</div>';
+}
+function canMergeGems(){
+  const counts={};
+  (S.gems||[]).forEach(g=>{ const k=(g.id||"")+"_"+(g.lv||1); counts[k]=(counts[k]||0)+1; });
+  return Object.keys(counts).some(k=>{ const lv=Number(k.split("_")[1]); return lv<3&&counts[k]>=3; });
+}
+function renderCraftPanel(){
+  const mats=S.mats||0, ess=S.essence||0;
+  const pe=S.petEssence||0;
+  let h='<div class="craft-hero">'+
+    '<div class="craft-res">🧱 材料 <b>'+mats+'</b></div>'+
+    '<div class="craft-res purple">💎 精炼精华 <b>'+ess+'</b></div>'+
+    '<div class="craft-res cyan">🐾 宠物精华 <b>'+pe+'</b></div>'+
+    '<div class="pill">装备材料不用于宠物</div>'+
+  '</div>'+
+  '<div class="craft-grid"><div><div class="section-title">已装备 · 洗练 / 镶嵌</div><div class="craft-list">'+
+    EQ_SLOTS.map(craftCard).join('')+
+  '</div></div><div><div class="section-title">宝石背包</div><div class="soft-card">'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span class="pill">'+((S.gems||[]).length)+' 颗</span><button class="reset-small" style="color:var(--gold);margin-left:auto;" onclick="synthGems()" '+(canMergeGems()?'':'disabled')+'>⬆ 3 合 1 升级</button></div>'+
+    gemInventoryHtml()+
+    '<div class="craft-tip">同色同等级 3 颗自动合成 1 颗高一级宝石；最高 Lv.3。镶嵌后的宝石会从背包移入装备，取下时回到背包。</div>'+
+  '</div><div class="section-title" style="margin-top:14px;">操作提示</div><div class="soft-card craft-tip" style="margin:0;">'+
+    '<div>🔨 洗练：消耗 15 精炼材料，随机重铸一条词缀。</div>'+
+    '<div>💎 镶嵌：为已装备物品装入一颗宝石，替换时会退回旧宝石。</div>'+
+    '<div>🔮 精炼 / 突破：请到「精炼」子页操作，与强化互不干扰。</div>'+
+  '</div></div></div>';
+  $("craftPanel").innerHTML=h;
 }
 function rerollItem(src,key){
   if((S.mats||0)<15){ log("材料不足，需要 15 精炼材料","bad"); return; }
   const it=src==="eq"?S.equip[key]:S.bag[key];
   if(!it){ log("物品不存在","bad"); return; }
-  S.mats-=15;
   const keys=Object.keys(it.stats||{});
   if(!keys.length){ log("该物品没有词缀可洗","bad"); return; }
+  S.mats-=15;
   const pow=EQ_QUALITY[it.quality].mul*(0.8+Math.random()*0.5)*(1+0.18*(it.lv-1));
   const fresh=rollAffixes(EQ_QUALITY[it.quality],pow,0);
   const fk=Object.keys(fresh||{});
@@ -3687,30 +3989,33 @@ function rerollItem(src,key){
     it.stats[nk]=fresh[nk];
   }
   it.score=itemScore(it);
-  save(); log("🔨 洗练完成！消耗 15 材料","good"); openCraft();
+  save(); log("🔨 洗练完成！消耗 15 材料","good"); renderAll(); renderCraftPanel();
 }
 function openGemSocket(src,key){
   const it=src==="eq"?S.equip[key]:S.bag[key];
   if(!it) return;
   const gems=S.gems||[];
-  if(!gems.length){ log("背包里没有宝石","bad"); return; }
-  let h='<div style="font-size:12px;color:#8b95c0;margin-bottom:6px;">为「'+it.name+'」选择要镶嵌的宝石</div>';
-  h+=gems.map((g,i)=>{const gd=GEM_TYPES.find(x=>x.id===g.id);return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(130,120,255,.06);cursor:pointer;" onclick="socketGem(\''+src+'\','+key+','+i+')">'+gd.icon+' '+gd.name+' Lv.'+(g.lv||1)+'<span style="color:#8b95c0;font-size:11px;">'+gd.desc+'</span></div>';}).join('');
-  modal("💎 镶嵌宝石", h,'',null,[{label:"取消",cls:"btn",fn:()=>{openCraft();}}]);
+  if(!gems.length){ log("背包里没有宝石，先去签到或刷怪","bad"); return; }
+  let h='<div style="font-size:12px;color:#8b95c0;margin-bottom:8px;">为「<b style="color:#ffd97a;">'+it.name+'</b>」选择宝石'+(it.gem?'（当前宝石会被替换并退回背包）':'')+'</div>';
+  h+='<div class="gem-inv">'+gems.map((g,i)=>{const gd=GEM_TYPES.find(x=>x.id===g.id);return '<button class="gem-chip g'+(g.lv||1)+'" style="cursor:pointer;" onclick="socketGem(\''+src+'\',\''+key+'\','+i+')">'+gd.icon+' '+gd.name+' <b>Lv.'+(g.lv||1)+'</b> <small>'+gd.desc+'</small></button>';}).join('')+'</div>';
+  modal("💎 镶嵌宝石", h,'',null,[{label:"取消",cls:"btn",fn:()=>{renderCraftPanel();}}]);
+  $("modalBox").classList.add("pet-modal");
 }
 function socketGem(src,key,gi){
   const it=src==="eq"?S.equip[key]:S.bag[key];
-  if(!it||!S.gems[gi]) return;
+  if(!it||!S.gems||!S.gems[gi]){ log("宝石不存在，请重试","bad"); return; }
   if(it.gem) S.gems.push(it.gem);
   it.gem=S.gems.splice(gi,1)[0];
   it.score=itemScore(it);
-  save(); log("💎 镶嵌成功！","good"); openCraft();
+  save(); log("💎 镶嵌成功！","good");
+  try{ $("overlay").classList.remove("on"); gamePaused=false; }catch(e){}
+  renderAll(); renderCraftPanel();
 }
 function removeGem(src,key){
   const it=src==="eq"?S.equip[key]:S.bag[key];
   if(!it||!it.gem) return;
-  S.gems.push(it.gem); it.gem=null; it.score=itemScore(it);
-  save(); log("💎 已取下宝石","good"); openCraft();
+  S.gems=S.gems||[]; S.gems.push(it.gem); it.gem=null; it.score=itemScore(it);
+  save(); log("💎 已取下宝石，退回背包","good"); renderAll(); renderCraftPanel();
 }
 /* ===== 关卡词缀 ===== */
 const STAGE_AFFIXES=[
@@ -3797,41 +4102,100 @@ function openLeague(){
 function openSkillTree(){
   if(!S.classId){ log("请先选择职业","bad"); return; }
   const cls=CLASSES.find(c=>c.id===S.classId);
-  const st=S.skillTree||{flow:null,skillLv:{skill:1,skill2:1,ulti:1},pts:0};
-  S.skillTree=st;
+  const st=ensureSkillTree();
   const flows=SKILL_FLOWS[cls.id]||[];
-  const cur=getFlow();
   const pts=st.pts||0;
-  const skillRows=["skill","skill2","ulti"].map(type=>{
-    const lv=st.skillLv&&st.skillLv[type]||1;
-    const nm=(cur&&SKILL_FLOW_NAMES[cls.id]&&SKILL_FLOW_NAMES[cls.id][cur.id]&&SKILL_FLOW_NAMES[cls.id][cur.id][type])||(type==="skill"?cls.skill.name:(type==="skill2"?cls.skill2.name:cls.ultimate.name));
-    const icon=type==="skill"?cls.skill.icon:(type==="skill2"?cls.skill2.icon:cls.ultimate.icon);
-    const cd=type==="skill"?cls.skill.cd:(type==="skill2"?cls.skill2.cd:cls.ultimate.cd);
-    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(130,120,255,.08);"><span style="font-size:20px;">'+icon+'</span><div style="flex:1;"><div style="font-size:13px;font-weight:700;">'+nm+(type==="ulti"?' <span style="color:#ff4fa3;font-size:10px;">大招</span>':'')+'</div><div style="font-size:10px;color:#8b95c0;">CD '+cd+'s ｜ 当前 Lv.'+lv+'（每级+8%效果）</div></div>'+
-      (lv>=10?'<span style="color:#8b95c0;">已满级</span>':'<button class="reset-small" style="color:var(--gold);" onclick="upSkill(\''+type+'\')" '+(pts<=0?'disabled':'')+'>升级</button>')+'</div>';
+  const defs=[
+    {type:"skill",def:cls.skill,mark:"核心"},
+    {type:"skill2",def:cls.skill2,mark:"战术"},
+    {type:"ulti",def:cls.ultimate,mark:"终极"}
+  ];
+  const flowChips=flows.map(f=>'<button class="flow-chip '+(st.flow===f.id?'on':'')+'" onclick="chooseFlow(\''+f.id+'\')">'+f.icon+' '+f.name+'</button>').join('');
+  const branch=(type,tier)=>{
+    const lv=st.skillLv[type]||1;
+    const locked=lv<tier;
+    return (SKILL_MUTS[tier]||[]).map(m=>{
+      const on=st.mut[type]&&st.mut[type][tier]===m.id;
+      return '<button class="mut-card '+(on?'on':'')+' '+(locked?'disabled':'')+'" '+(locked?'disabled':'')+' onclick="selectMut(\''+type+'\','+tier+',\''+m.id+'\')">'+
+        '<b>'+m.icon+' '+m.name+'</b><span>'+m.desc+'</span></button>';
+    }).join('');
+  };
+  const cols=defs.map(o=>{
+    const lv=st.skillLv[o.type]||1;
+    const nm=skillDisplayName(cls.id,S.raceId,o.type);
+    const cd=skillCdOf(o.type);
+    const dots=Array.from({length:10},(_,i)=>'<div class="tree-dot '+(i<lv?'on':'')+'"></div>').join('');
+    return '<div class="tree-col">'+
+      '<div class="tc-head"><span class="tc-ic">'+o.def.icon+'</span><span>'+nm+'</span><span class="tc-lv">'+o.mark+' · Lv.'+lv+'/10</span></div>'+
+      '<div style="font-size:10px;color:#7f8cc0;margin-top:3px;">冷却 '+cd+'s ｜ 每级 +8% 效果</div>'+
+      '<div class="tree-dots">'+dots+'</div>'+
+      '<div class="tree-scale"><span>1</span><span>5</span><span>10</span></div>'+
+      '<div class="tree-branch"><div class="tree-branch-label">Lv.5 变异分支 '+(lv>=5?'· 已解锁':'· Lv.5 解锁')+'</div>'+branch(o.type,5)+'</div>'+
+      '<div class="tree-branch"><div class="tree-branch-label">Lv.10 终极变异 '+(lv>=10?'· 已解锁':'· Lv.10 解锁')+'</div>'+branch(o.type,10)+'</div>'+
+      '<button class="tree-up" onclick="upSkill(\''+o.type+'\')" '+(lv>=10||pts<=0?'disabled':'')+'>'+(lv>=10?'已满级':'升级到 Lv.'+(lv+1)+'（1 点）')+'</button>'+
+    '</div>';
   }).join('');
-  const flowCards=flows.map(f=>{
-    const on=f.id===st.flow;
-    const nm=SKILL_FLOW_NAMES[cls.id]&&SKILL_FLOW_NAMES[cls.id][f.id];
-    return '<div style="border:1px solid '+(on?'rgba(255,209,102,.6)':'var(--line)')+';background:'+(on?'rgba(255,209,102,.08)':'rgba(10,15,31,.5)')+';border-radius:10px;padding:8px;margin:4px 0;cursor:pointer;" onclick="chooseFlow(\''+f.id+'\')"><div style="font-size:14px;font-weight:800;">'+f.icon+' '+f.name+(on?' <span style="color:var(--cyan);font-size:11px;">◎当前</span>':'')+'</div><div style="font-size:11px;color:#8b95c0;margin-top:2px;">'+f.desc+'</div><div style="font-size:10px;color:#7f8cc0;margin-top:2px;">技能变异：'+(nm?nm.skill+" / "+nm.skill2+" / "+nm.ulti:"")+'</div></div>';
-  }).join('');
-  const exp='<div style="font-size:11px;color:#8b95c0;margin:6px 0;">技能点：每升 1 级 +2 点；选择流派后技能名称与效果发生变异</div>';
-  modal("🌳 技能树", '<div class="pts-line">流派选择 <span style="color:#8b95c0;font-size:11px;">（可随时切换）</span></div>'+flowCards+'<div class="pts-line">技能升级 <b style="color:var(--gold);">剩余 '+pts+' 点</b></div>'+skillRows+exp,'',null,[{label:"关闭",cls:"btn",fn:()=>{}}]);
+  const html='<div class="tree-top">🌳 技能点 <b>'+pts+'</b><span style="font-size:11px;color:#8b95c0;">每升 1 级 +2 点</span>'+
+    '<button class="reset-small" style="margin-left:auto;color:#ff9ad1;" onclick="resetSkillTree()">↺ 重置返还</button></div>'+
+    '<div class="section-title">推荐流派 · 一键套用属性与建议变异</div>'+
+    '<div class="tree-presets">'+flowChips+'</div>'+
+    '<div style="font-size:10px;color:#7f8cc0;margin:-2px 0 10px;">套用推荐流派会获得常驻属性，并自动填入已解锁的建议变异；三个技能的升级与分支仍可自由修改。</div>'+
+    '<div class="section-title">技能树 · 三条独立分叉</div>'+
+    '<div class="tree-grid">'+cols+'</div>'+
+    '<div class="tree-foot"><span>变异可随时改回；重置会返还已投入的技能点。</span><span>当前推荐：'+(getFlow()?getFlow().icon+' '+getFlow().name:'未选择')+'</span></div>';
+  modal("🌳 技能树",html,'',null,[{label:"关闭",cls:"btn",fn:()=>{}}]);
+  $("modalBox").classList.add("tree-modal");
 }
 function chooseFlow(fid){
-  S.skillTree=S.skillTree||{flow:null,skillLv:{skill:1,skill2:1,ulti:1},pts:0};
-  S.skillTree.flow=fid;
-  save(); log("🌳 切换流派成功！","good");
+  const st=ensureSkillTree();
+  st.flow=fid;
+  /* 推荐方案：坦克/治疗类走冷却，输出类走伤害；只填入已解锁的分支，玩家仍可改 */
+  const utility=(fid==="iron"||fid==="holy"||fid==="bless");
+  const pick=utility?{5:"swift",10:"echo"}:{5:"sharp",10:"doom"};
+  ["skill","skill2","ulti"].forEach(t=>{
+    const lv=st.skillLv[t]||1;
+    if(lv>=5) st.mut[t][5]=pick[5];
+    if(lv>=10) st.mut[t][10]=pick[10];
+  });
+  save(); log("🌳 已套用推荐流派："+((SKILL_FLOWS[S.classId]||[]).find(f=>f.id===fid)||{}).name+"（含建议变异，可手动修改）","good");
   if(combat) renderSkill();
   openSkillTree();
 }
 function upSkill(type){
-  S.skillTree=S.skillTree||{flow:null,skillLv:{skill:1,skill2:1,ulti:1},pts:0};
-  if((S.skillTree.pts||0)<=0){ log("没有可用技能点","bad"); return; }
-  if((S.skillTree.skillLv[type]||1)>=10){ log("该技能已满级","bad"); return; }
-  S.skillTree.pts--; S.skillTree.skillLv[type]=(S.skillTree.skillLv[type]||1)+1;
-  save(); log("🌳 技能升级至 Lv."+S.skillTree.skillLv[type]+"！","good");
+  const st=ensureSkillTree();
+  if((st.pts||0)<=0){ log("没有可用技能点","bad"); return; }
+  const lv=st.skillLv[type]||1;
+  if(lv>=10){ log("该技能已满级","bad"); return; }
+  st.pts--; st.skillLv[type]=lv+1;
+  save();
+  if(combat) renderSkill();
   openSkillTree();
+  log("🌳 "+(({skill:"核心技能",skill2:"战术技能",ulti:"终极技能"})[type])+"升级至 Lv."+(lv+1),"good");
+  if(lv+1===5||lv+1===10) log("🌿 已解锁 Lv."+(lv+1)+" 变异分支，可在技能树中选择","st");
+}
+function selectMut(type,tier,id){
+  const st=ensureSkillTree();
+  if((st.skillLv[type]||1)<tier){ log("需要技能达到 Lv."+tier+" 才能选择该变异","bad"); return; }
+  if(st.mut[type][tier]===id){ delete st.mut[type][tier]; log("🌿 已取消该变异分支","st"); }
+  else{
+    st.mut[type][tier]=id;
+    const m=(SKILL_MUTS[tier]||[]).find(x=>x.id===id);
+    log("🌿 已选择变异："+(m?m.icon+m.name:id),"good");
+  }
+  save();
+  if(combat) renderSkill();
+  openSkillTree();
+}
+function resetSkillTree(){
+  const st=ensureSkillTree();
+  let refund=0;
+  ["skill","skill2","ulti"].forEach(t=>{ refund+=Math.max(0,(st.skillLv[t]||1)-1); st.skillLv[t]=1; });
+  st.mut={};
+  st.pts=(st.pts||0)+refund;
+  save();
+  if(combat) renderSkill();
+  openSkillTree();
+  log("↺ 技能树已重置，返还 "+refund+" 点技能点","st");
 }
 function grantSkillPts(n){ S.skillTree=S.skillTree||{flow:null,skillLv:{skill:1,skill2:1,ulti:1},pts:0}; S.skillTree.pts=(S.skillTree.pts||0)+(n||1); }
 
@@ -3850,7 +4214,7 @@ function startLoop(){
       lastUi=now;
       renderEnemy();
       if(combat&&combat._cdEls){
-        const cdMaxs=[CLASSES.find(c=>c.id===S.classId).skill.cd, CLASSES.find(c=>c.id===S.classId).skill2.cd, CLASSES.find(c=>c.id===S.classId).ultimate.cd];
+        const cdMaxs=[skillCdOf("skill"),skillCdOf("skill2"),skillCdOf("ulti")];
         const cds=[combat.skillCd,combat.skill2Cd,combat.ultiCd];
         for(let i=0;i<3;i++){
           if(!combat._cdEls[i]) continue;
