@@ -1686,6 +1686,21 @@ const STORY_INTRO = "世界破碎的边缘，一个全新的觉醒者睁开了�
 
 /* ================= 游戏状态 ================= */
 const SAVE_KEY = "isekai_awaken_save_v1";
+const SAVE_SCOPE_PREFIX = "isekai_awaken_save_v1::";
+/* 存档按账号隔离：未登录用 guest，登录后用 u_<Supabase user id>。
+   旧版全局 SAVE_KEY 只迁移给 guest，绝不带进任何账号，避免同设备串号。 */
+function saveScope(){
+  return (supabaseSession && supabaseSession.user && supabaseSession.user.id)
+    ? ("u_"+supabaseSession.user.id) : "guest";
+}
+function currentSaveKey(){ return SAVE_SCOPE_PREFIX + saveScope(); }
+function persistCurrentLocal(){
+  try{
+    if(S && S.raceId && S.classId){
+      localStorage.setItem(currentSaveKey(), JSON.stringify(S));
+    }
+  }catch(e){}
+}
 
 /* ================= Supabase 云存档 ================= */
 const SUPABASE_URL = "https://heajfztnvwermvxktbva.supabase.co";
@@ -2142,7 +2157,7 @@ let sbCloudTimer=0;
 function save(){
   S.lastSeen=Date.now();
   try{
-    localStorage.setItem(SAVE_KEY,JSON.stringify(S));
+    localStorage.setItem(currentSaveKey(),JSON.stringify(S));
     $("hSaveInfo").textContent="自动存档:"+new Date().toLocaleTimeString();
   }catch(e){
     /* 存储失败不静默：给出可感知的提示 */
@@ -2160,7 +2175,15 @@ function save(){
 }
 function load(){
   try{
-    const raw=localStorage.getItem(SAVE_KEY);
+    let raw=localStorage.getItem(currentSaveKey());
+    /* 只给游客迁移旧版全局存档；账号槽不读取旧 key，防止串号 */
+    if(!raw && saveScope()==="guest"){
+      const legacy=localStorage.getItem(SAVE_KEY);
+      if(legacy){
+        raw=legacy;
+        try{ localStorage.setItem(currentSaveKey(),legacy); }catch(e){}
+      }
+    }
     if(!raw) return false;
     const d=JSON.parse(raw);
     if(!d||!RACES.find(r=>r.id===d.raceId)||!CLASSES.find(c=>c.id===d.classId)) return false;
@@ -2171,7 +2194,10 @@ function load(){
     return true;
   }catch(e){return false;}
 }
-function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+function clearSave(){
+  try{ localStorage.removeItem(currentSaveKey()); }catch(e){}
+  if(saveScope()==="guest"){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+}
 function resetGame(){
   if(!confirm("确定要删除当前存档、重新开始冒险吗？此操作不可恢复。")) return;
   clearSave();
@@ -2809,13 +2835,15 @@ async function authLogin(){
   const pass = $("authPass").value;
   if(!username || !pass){ $("authMsg").textContent="请填写用户名和密码"; return; }
   $("authMsg").textContent="登录中…";
+  /* 切换账号前先把当前身份（游客或旧账号）的存档落到自己的槽位 */
+  if(S.raceId && S.classId) persistCurrentLocal();
   try{
     const d = await supabaseSignIn(username, pass);
     if(d && d.error){ $("authMsg").textContent="❌ "+d.error; return; }
     if(d && d.access_token){
-      $("authMsg").textContent="✅ 登录成功，正在同步存档…";
-      await syncCloudOnLogin();
-      renderAuthArea(); renderMainMenu();
+      $("authMsg").textContent="✅ 登录成功，正在载入该账号的存档…";
+      await switchAccountAfterLogin();
+      $("authMsg").textContent="✅ 已登录："+((supabaseSession.username)||username);
     }else{
       $("authMsg").textContent="❌ 登录失败：用户名或密码错误（未注册请先注册）";
     }
@@ -2823,12 +2851,28 @@ async function authLogin(){
     $("authMsg").textContent="❌ 登录失败："+authFriendlyError(e);
   }
 }
+async function switchAccountAfterLogin(){
+  /* 关键：清空内存里的上一位玩家，再只读取当前账号自己的槽位 */
+  S=JSON.parse(JSON.stringify(EMPTY));
+  combat=null;
+  load();
+  await syncCloudOnLogin();
+  const game=$("game");
+  if(game && game.classList.contains("on")){
+    game.classList.remove("on");
+    $("screens").style.display="";
+    if(loopId){ clearInterval(loopId); loopId=null; }
+  }
+  renderAuthArea(); renderMainMenu();
+  log("🔐 已切换账号："+((supabaseSession&&supabaseSession.username)||"当前账号")+"（存档按账号隔离）","st");
+}
 async function authRegister(){
   const username = $("authUser").value.trim();
   const pass = $("authPass").value;
   if(!username || !pass){ $("authMsg").textContent="请填写用户名和密码"; return; }
   if(pass.length < 6){ $("authMsg").textContent="密码至少 6 位"; return; }
   $("authMsg").textContent="注册中…";
+  if(S.raceId && S.classId) persistCurrentLocal();
   try{
     const d = await supabaseSignUp(username, pass);
     if(d && d.error){ $("authMsg").textContent="❌ "+d.error; return; }
@@ -2838,9 +2882,9 @@ async function authRegister(){
         const m = unameToEmail(username);
         supabaseSession = {access_token: d.access_token, user: d.user, refresh_token: d.refresh_token, username: m.display};
         try{ localStorage.setItem("isekai_sb_session", JSON.stringify(supabaseSession)); }catch(e){}
-        $("authMsg").textContent="✅ 注册成功，已自动登录！正在同步存档…";
-        await syncCloudOnLogin();
-        renderAuthArea(); renderMainMenu();
+        $("authMsg").textContent="✅ 注册成功，已自动登录！正在载入新账号…";
+        await switchAccountAfterLogin();
+        $("authMsg").textContent="✅ 注册成功，已登录："+username;
       }else{
         $("authMsg").textContent="✅ 注册成功！请直接点「登录」开始云存档。";
       }
@@ -2852,9 +2896,21 @@ async function authRegister(){
   }
 }
 function authLogout(){
+  /* 退出前把账号存档落到该账号槽位，再切回游客槽位 */
+  if(S.raceId && S.classId) save();
+  const old=(supabaseSession&&supabaseSession.username)||"账号";
   supabaseSignOut();
+  S=JSON.parse(JSON.stringify(EMPTY));
+  combat=null;
+  load();
+  if(loopId){ clearInterval(loopId); loopId=null; }
+  const game=$("game");
+  if(game && game.classList.contains("on")){
+    game.classList.remove("on");
+    $("screens").style.display="";
+  }
   renderAuthArea(); renderMainMenu();
-  log("👋 已退出账号，改为本地存档模式","st");
+  log("👋 已退出 "+old+"，切回本机游客存档","st");
 }
 async function syncCloudOnLogin(){
   if(!supabaseSession) return false;
@@ -2908,7 +2964,7 @@ function renderAuthArea(){
         '<span style="font-size:13px;color:#9aa5d4;">☁️ 账号：<b style="color:var(--gold);">'+st.username+'</b></span>'+
         '<button class="reset-small" style="padding:2px 10px;" onclick="authLogout()">退出</button>'+
       '</div>'+
-      '<div style="font-size:12px;color:#8b95c0;margin-top:6px;">云存档已开启：任何电脑登录此账号，都会自动载入最新存档</div>'+
+      '<div style="font-size:12px;color:#8b95c0;margin-top:6px;">云存档已开启：任何电脑登录此账号，都会自动载入最新存档；本机存档已按账号隔离</div>'+
       '<div style="margin-top:6px;"><button class="reset-small" onclick="authCloudSyncNow()">☁️ 立即同步存档</button></div>';
   }else{
     el.innerHTML =
@@ -3070,6 +3126,7 @@ $("menuBtn").onclick=backToMenu;
 /* 底部导航标签切换 */
 function switchTab(tab){
   activeTab=tab;
+  try{ floatPosCache.t=0; }catch(e){}
   const map={battle:"battlePage",hero:"heroPage",equip:"equipPage",sets:"setsPage",adventure:"adventurePage",map:"mapPage",social:"socialPage"};
   document.querySelectorAll(".tab-page").forEach(p=>p.classList.remove("active"));
   const page=$({battle:"battlePage",hero:"heroPage",equip:"equipPage",sets:"setsPage",adventure:"adventurePage",map:"mapPage",social:"socialPage"}[tab]);
@@ -6323,11 +6380,17 @@ function applyOffline(){
 
 /* ================= 初始化 ================= */
 (function init(){
-  /* 关键：先把本地存档读回内存，否则刷新后永远显示“尚无存档” */
+  /* 关键：先恢复账号会话，再按账号读取本地槽位；否则会读到 guest 槽 */
+  supabaseRestoreSession();
   load();
   renderRaceGrid();
   /* 每次打开先进主菜单存档界面：有档可继续冒险，无档则开新游戏 */
   renderMainMenu();
+  if(supabaseSession){
+    setTimeout(()=>{
+      syncCloudOnLogin().then(()=>{ try{ renderAuthArea(); renderMainMenu(); }catch(e){} }).catch(()=>{});
+    },0);
+  }
   setTimeout(()=>{ try{ renderAchievementBadge(); syncSoundBtn(); syncFxBtn(); }catch(e){} },0);
 })();
 /* 页面隐藏/关闭时补一次保存，最多只丢最后几秒 */
